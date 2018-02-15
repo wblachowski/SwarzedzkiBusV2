@@ -20,7 +20,7 @@ public class PDFmanager {
         Rectangle rect1 = new Rectangle(30, 95, 120, 250);
         Rectangle rect2 = new Rectangle(155, 95, 120, 250);
         Rectangle rect3 = new Rectangle(275, 95, 120, 250);
-        Rectangle rectRemarks = new Rectangle(30,350,360,250);
+        Rectangle rectRemarks = new Rectangle(30,350,400,250);
         stripper.addRegion("column1", rect1);
         stripper.addRegion("column2", rect2);
         stripper.addRegion("column3", rect3);
@@ -40,7 +40,7 @@ public class PDFmanager {
 
         String all=column1+column2+column3;
         if(hasRemarks(all)){
-            resolveAnnotations(remarks);
+            resolveRemarks(remarks);
             System.out.println(all);
         }
         document.close();
@@ -51,21 +51,9 @@ public class PDFmanager {
         return Pattern.matches(".*[a-zA-Z]+.*",toCheck);
     }
 
-    private ArrayList<String> resolveAnnotations(String text){
-        System.out.println("******\nWHOLE:");
-        System.out.println(text);
-        System.out.println("******\nPARTS:");/*
-        ArrayList<String> remarks=new ArrayList<String>();
-        String[] remarksSemicolon = text.split(";");
+    private ArrayList<Remark> resolveRemarks(String text){
+        ArrayList<Remark> remarks=new ArrayList<Remark>();
         text=text.replace(" / ","/");
-        for(String remarkSemicolon : remarksSemicolon){
-            for(String remark : remarkSemicolon.split("(?=([A-Za-z#]\\s-\\s))")){
-                remarks.add(remark);
-                System.out.println("-------");
-                System.out.println(remark);
-                System.out.println("-------");
-            }
-        }*/
         for(int i=0;i<text.length();i++){
             if(isMinus(text,i)){
                 String remark="";
@@ -77,7 +65,6 @@ public class PDFmanager {
                     remark = text.charAt(j) + remark;
                     j--;
                 }
-
                 while(y<text.length() && !Character.isLetter(text.charAt(y)))y++;
                 while(y<text.length() && !isMinus(text,y)){
                     description+=text.charAt(y);
@@ -89,10 +76,15 @@ public class PDFmanager {
                         description=description.substring(0,description.length()-1);
                     }
                 }
-                if(!remark.trim().equals("") && remark.length()<5)System.out.println(remark + " => "+description);
+                description=description.trim();
+                description=description.replace(";","");
+                if(description.endsWith(","))description=description.substring(0,description.length()-1);
+                if(!remark.trim().equals("") && remark.length()<5){
+                    remarks.add(new Remark(remark,description));
+                }
             }
         }
-        return null;
+        return remarks;
     }
 
     private boolean isMinus(String text, int i){

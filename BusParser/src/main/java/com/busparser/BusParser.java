@@ -27,7 +27,7 @@ public class BusParser {
 
     public void begin() {
         try {
-            java.util.logging.Logger.getLogger("org.apache.pdfbox").setLevel(java.util.logging.Level.SEVERE);
+            java.util.logging.Logger.getLogger("org.apache.pdfbox").setLevel(java.util.logging.Level.OFF);
             loadProperties();
             webParser = new WebParser();
             fileManager = new FileManager();
@@ -37,7 +37,7 @@ public class BusParser {
                 Map<String, String> linksToStops = webParser.retrieveLinks(entry.getKey(), ".*\\.pdf");
                 for (Map.Entry<String, String> stopEntry : linksToStops.entrySet()) {
                     System.out.println(stopEntry.getKey() + " " + stopEntry.getValue());
-                    //if(stopEntry.getKey().endsWith("S4_S086_1.pdf"))
+                    //if(stopEntry.getKey().endsWith("S4_S007_1.pdf"))
                         handlePDF(stopEntry.getKey(), stopEntry.getValue());
                 }
                 System.out.println();
