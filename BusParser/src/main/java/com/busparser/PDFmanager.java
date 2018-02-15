@@ -7,6 +7,8 @@ import org.apache.pdfbox.text.PDFTextStripperByArea;
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
+import java.text.Annotation;
+import java.util.ArrayList;
 import java.util.regex.Pattern;
 
 public class PDFmanager {
@@ -18,35 +20,110 @@ public class PDFmanager {
         Rectangle rect1 = new Rectangle(30, 95, 120, 250);
         Rectangle rect2 = new Rectangle(155, 95, 120, 250);
         Rectangle rect3 = new Rectangle(275, 95, 120, 250);
+        Rectangle rectRemarks = new Rectangle(30,350,360,250);
         stripper.addRegion("column1", rect1);
         stripper.addRegion("column2", rect2);
         stripper.addRegion("column3", rect3);
-        PDPage firstPage = (PDPage) document.getPages().get(0);
+        stripper.addRegion("remarks",rectRemarks);
+        PDPage firstPage = document.getPages().get(0);
         stripper.extractRegions(firstPage);
 
-        String column1,column2,column3;
+        String column1,column2,column3,remarks;
 
-        // System.out.println("DNI ROBOCZE");
         column1=stripper.getTextForRegion("column1");
-        //System.out.println(column1);
 
-        // System.out.println("SOBOTY");
         column2=stripper.getTextForRegion("column2");
-        //System.out.println(column2);
 
-        //System.out.println("NIEDZIELE I ŚWIĘTA");
         column3=stripper.getTextForRegion("column3");
-        //System.out.println(column3);
+
+        remarks = stripper.getTextForRegion("remarks");
 
         String all=column1+column2+column3;
-        if(hasAnnotataions(all)){
+        if(hasRemarks(all)){
+            resolveAnnotations(remarks);
             System.out.println(all);
         }
         document.close();
     }
 
-    private boolean hasAnnotataions(String text){
+    private boolean hasRemarks(String text){
         String toCheck = text.replace("\r\n","").toUpperCase().replace("NIE KURSUJE","");
         return Pattern.matches(".*[a-zA-Z]+.*",toCheck);
     }
+
+    private ArrayList<String> resolveAnnotations(String text){
+        System.out.println("******\nWHOLE:");
+        System.out.println(text);
+        System.out.println("******\nPARTS:");/*
+        ArrayList<String> remarks=new ArrayList<String>();
+        String[] remarksSemicolon = text.split(";");
+        text=text.replace(" / ","/");
+        for(String remarkSemicolon : remarksSemicolon){
+            for(String remark : remarkSemicolon.split("(?=([A-Za-z#]\\s-\\s))")){
+                remarks.add(remark);
+                System.out.println("-------");
+                System.out.println(remark);
+                System.out.println("-------");
+            }
+        }*/
+        for(int i=0;i<text.length();i++){
+            if(isMinus(text,i)){
+                String remark="";
+                String description="";
+                int j=i;
+                int y=i;
+                while(j>=0 && (text.charAt(j)==' ' || isMinus(text,j)))j--;
+                while(j>=0 && text.charAt(j)!=' ' && text.charAt(j)!='\n') {
+                    remark = text.charAt(j) + remark;
+                    j--;
+                }
+
+                while(y<text.length() && !Character.isLetter(text.charAt(y)))y++;
+                while(y<text.length() && !isMinus(text,y)){
+                    description+=text.charAt(y);
+                    y++;
+                }
+                if(y<text.length() && isMinus(text,y)){
+                    description=description.trim();
+                    while(!description.equals("") && description.charAt(description.length()-1)!=' '){
+                        description=description.substring(0,description.length()-1);
+                    }
+                }
+                if(!remark.trim().equals("") && remark.length()<5)System.out.println(remark + " => "+description);
+            }
+        }
+        return null;
+    }
+
+    private boolean isMinus(String text, int i){
+        if(text.charAt(i)!='-')return false;
+        else return !isInBracket(text,i);
+    }
+
+    private boolean isInBracket(String text, int i){
+        while(i>=0){
+            if(text.charAt(i)==')')return false;
+            if(text.charAt(i)=='(')return true;
+            i--;
+        }
+        return false;
+    }
+
+    private class Remark{
+        String title;
+        String description;
+        public Remark(String title, String description){
+            this.title=title;
+            this.description=description;
+        }
+
+        public String getDescription() {
+            return description;
+        }
+
+        public String getTitle() {
+            return title;
+        }
+    }
+
 }
