@@ -6,14 +6,25 @@ import org.apache.pdfbox.text.PDFTextStripperByArea;
 
 import java.awt.*;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStream;
 import java.util.Map;
+import java.util.Properties;
 
 public class BusParser {
+
+    String urlToBuses;
+
     public static void main(String[] args) {
+        new BusParser().parse();
+    }
+
+    public void parse() {
         try {
+            LoadProperties();
             WebParser webParser = new WebParser();
-            Map<String,String> links = webParser.retrieveLinks("http://www.swarzedz.pl/fileadmin/Swarzedz/Informator_miejski/komunikacja/rozklad/przystankowy/razem_lista.htm",".*lista.htm");
-            for (Map.Entry<String, String> entry : links.entrySet()) {
+            Map<String, String> linksToBuses = webParser.retrieveLinks(urlToBuses, ".*lista.htm");
+            for (Map.Entry<String, String> entry : linksToBuses.entrySet()) {
                 String key = entry.getKey();
                 String value = entry.getValue();
                 System.out.println(key + " " + value);
@@ -38,8 +49,20 @@ public class BusParser {
             System.out.println("NIEDZIELE I ŚWIĘTA");
             System.out.println(stripper.getTextForRegion("column3"));*/
 
-        }catch(Exception ex){
+        } catch (Exception ex) {
             ex.printStackTrace();
         }
+    }
+
+    private void LoadProperties() {
+        try {
+            Properties prop = new Properties();
+            InputStream input = getClass().getResourceAsStream("/config.properties");
+            prop.load(input);
+            urlToBuses = prop.getProperty("urlToBuses");
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+
     }
 }
