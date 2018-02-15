@@ -32,7 +32,7 @@ public class BusParser {
             webParser = new WebParser();
             fileManager = new FileManager();
             pdfManager = new PDFmanager();
-            Map<String, String> linksToBuses = webParser.retrieveLinks(urlToBuses, ".*lista.htm");
+            /*Map<String, String> linksToBuses = webParser.retrieveLinks(urlToBuses, ".*lista.htm");
             for (Map.Entry<String, String> entry : linksToBuses.entrySet()) {
                 Map<String, String> linksToStops = webParser.retrieveLinks(entry.getKey(), ".*\\.pdf");
                 for (Map.Entry<String, String> stopEntry : linksToStops.entrySet()) {
@@ -41,7 +41,7 @@ public class BusParser {
                         handlePDF(stopEntry.getKey(), stopEntry.getValue());
                 }
                 System.out.println();
-            }
+            }*/
         } catch (Exception ex) {
             ex.printStackTrace();
         }
