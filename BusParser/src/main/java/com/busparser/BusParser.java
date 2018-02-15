@@ -1,23 +1,25 @@
 package com.busparser;
 
+import org.apache.pdfbox.pdfparser.PDFParser;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.text.PDFTextStripperByArea;
 
 import java.awt.*;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.util.Map;
 import java.util.Properties;
+import java.util.regex.Pattern;
 
 public class BusParser {
 
     String urlToBuses;
     WebParser webParser;
     FileManager fileManager;
+    PDFmanager pdfManager;
 
     public static void main(String[] args) {
         new BusParser().begin();
@@ -25,16 +27,20 @@ public class BusParser {
 
     public void begin() {
         try {
+            java.util.logging.Logger.getLogger("org.apache.pdfbox").setLevel(java.util.logging.Level.SEVERE);
             loadProperties();
             webParser = new WebParser();
             fileManager = new FileManager();
+            pdfManager = new PDFmanager();
             Map<String, String> linksToBuses = webParser.retrieveLinks(urlToBuses, ".*lista.htm");
             for (Map.Entry<String, String> entry : linksToBuses.entrySet()) {
                 Map<String, String> linksToStops = webParser.retrieveLinks(entry.getKey(), ".*\\.pdf");
                 for (Map.Entry<String, String> stopEntry : linksToStops.entrySet()) {
                     System.out.println(stopEntry.getKey() + " " + stopEntry.getValue());
-                    handlePDF(stopEntry.getKey(), stopEntry.getValue());
+                    //if(stopEntry.getKey().endsWith("S4_S077_1.pdf"))
+                        handlePDF(stopEntry.getKey(), stopEntry.getValue());
                 }
+                System.out.println();
             }
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -55,7 +61,7 @@ public class BusParser {
     private void handlePDF(String url, String stopName) {
         try {
             fileManager.download(url, "");
-            parseFile(fileManager.getFile());
+            pdfManager.parse(fileManager.getFile());
         } catch (MalformedURLException ex) {
             ex.printStackTrace();
         } catch (IOException ex) {
@@ -65,25 +71,4 @@ public class BusParser {
         }
     }
 
-    private void parseFile(File file) throws IOException {
-        PDDocument document = PDDocument.load(file);
-        PDFTextStripperByArea stripper = new PDFTextStripperByArea();
-        stripper.setSortByPosition(true);
-        Rectangle rect1 = new Rectangle(35, 95, 120, 250);
-        Rectangle rect2 = new Rectangle(155, 95, 120, 250);
-        Rectangle rect3 = new Rectangle(275, 95, 120, 250);
-        stripper.addRegion("column1", rect1);
-        stripper.addRegion("column2", rect2);
-        stripper.addRegion("column3", rect3);
-        PDPage firstPage = (PDPage) document.getPages().get(0);
-        stripper.extractRegions(firstPage);
-        System.out.println("DNI ROBOCZE");
-        System.out.println(stripper.getTextForRegion("column1"));
-        System.out.println("SOBOTY");
-        System.out.println(stripper.getTextForRegion("column2"));
-        System.out.println("NIEDZIELE I ŚWIĘTA");
-        System.out.println(stripper.getTextForRegion("column3"));
-        
-        document.close();
-    }
 }
