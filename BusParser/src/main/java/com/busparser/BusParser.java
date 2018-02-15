@@ -20,6 +20,7 @@ public class BusParser {
     WebParser webParser;
     FileManager fileManager;
     PDFmanager pdfManager;
+    DataBaseManager dataBaseManager;
 
     public static void main(String[] args) {
         new BusParser().begin();
@@ -27,11 +28,7 @@ public class BusParser {
 
     public void begin() {
         try {
-            java.util.logging.Logger.getLogger("org.apache.pdfbox").setLevel(java.util.logging.Level.OFF);
-            loadProperties();
-            webParser = new WebParser();
-            fileManager = new FileManager();
-            pdfManager = new PDFmanager();
+            initialize();
             /*Map<String, String> linksToBuses = webParser.retrieveLinks(urlToBuses, ".*lista.htm");
             for (Map.Entry<String, String> entry : linksToBuses.entrySet()) {
                 Map<String, String> linksToStops = webParser.retrieveLinks(entry.getKey(), ".*\\.pdf");
@@ -45,6 +42,16 @@ public class BusParser {
         } catch (Exception ex) {
             ex.printStackTrace();
         }
+    }
+
+    private void initialize(){
+        java.util.logging.Logger.getLogger("org.apache.pdfbox").setLevel(java.util.logging.Level.OFF);
+        loadProperties();
+        webParser = new WebParser();
+        fileManager = new FileManager();
+        pdfManager = new PDFmanager();
+        dataBaseManager = new DataBaseManager();
+        dataBaseManager.createNewDatabase();
     }
 
     private void loadProperties() {
@@ -70,5 +77,4 @@ public class BusParser {
             fileManager.cleanUp();
         }
     }
-
 }
