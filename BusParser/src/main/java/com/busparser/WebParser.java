@@ -40,8 +40,21 @@ public class WebParser {
     }
 
     private String getFullLink(String url,String link){
+        if(isValidUrl(link)){
+            return link;
+        }
         String full = url.substring(0,url.lastIndexOf('/')+1);
         full+=link;
         return full;
+    }
+
+    private boolean isValidUrl(String link){
+        try{
+            new URL(link).toURI();
+            return true;
+        }
+        catch(Exception ex){
+            return false;
+        }
     }
 }

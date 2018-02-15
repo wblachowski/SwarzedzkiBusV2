@@ -27,7 +27,10 @@ public class BusParser {
             for (Map.Entry<String, String> entry : linksToBuses.entrySet()) {
                 String key = entry.getKey();
                 String value = entry.getValue();
-                System.out.println(key + " " + value);
+                Map<String,String> linksToStops = webParser.retrieveLinks(key,".*\\.pdf");
+                for(Map.Entry<String,String> stopEntry : linksToStops.entrySet()){
+                    System.out.println(stopEntry.getKey() + " " + stopEntry.getValue());
+                }
             }
             /*
             File file = new File("401.pdf");
