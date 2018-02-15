@@ -4,12 +4,6 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
-
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
@@ -24,7 +18,7 @@ public class WebParser {
         Elements links = doc.select("a");
         for(Element link : links){
             if(Pattern.matches(pattern,link.attr("href"))){
-                linksMap.put(getFullLink(url,link.attr("href")),link.html());
+                linksMap.put(getFullLink(url,link.attr("href")),link.text());
             }
         }
         return linksMap;
