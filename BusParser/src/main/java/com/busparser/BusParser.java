@@ -29,16 +29,17 @@ public class BusParser {
     public void begin() {
         try {
             initialize();
-            /*Map<String, String> linksToBuses = webParser.retrieveLinks(urlToBuses, ".*lista.htm");
+            Map<String, String> linksToBuses = webParser.retrieveLinks(urlToBuses, ".*lista.htm");
             for (Map.Entry<String, String> entry : linksToBuses.entrySet()) {
-                Map<String, String> linksToStops = webParser.retrieveLinks(entry.getKey(), ".*\\.pdf");
+                dataBaseManager.insertBus(webParser.getBusName(entry.getKey()));
+                /*Map<String, String> linksToStops = webParser.retrieveLinks(entry.getKey(), ".*\\.pdf");
                 for (Map.Entry<String, String> stopEntry : linksToStops.entrySet()) {
                     System.out.println(stopEntry.getKey() + " " + stopEntry.getValue());
                     //if(stopEntry.getKey().endsWith("S4_S007_1.pdf"))
                         handlePDF(stopEntry.getKey(), stopEntry.getValue());
-                }
+                }*/
                 System.out.println();
-            }*/
+            }
         } catch (Exception ex) {
             ex.printStackTrace();
         }
@@ -69,6 +70,7 @@ public class BusParser {
         try {
             fileManager.download(url, "");
             pdfManager.parse(fileManager.getFile());
+            dataBaseManager.insertStop(url,stopName);
         } catch (MalformedURLException ex) {
             ex.printStackTrace();
         } catch (IOException ex) {

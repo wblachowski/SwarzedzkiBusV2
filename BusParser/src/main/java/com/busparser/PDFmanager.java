@@ -13,6 +13,11 @@ import java.util.regex.Pattern;
 
 public class PDFmanager {
 
+    String column1;
+    String column2;
+    String column3;
+    ArrayList<Remark> remarks;
+
     public void parse(File file) throws IOException {
         PDDocument document = PDDocument.load(file);
         PDFTextStripperByArea stripper = new PDFTextStripperByArea();
@@ -28,7 +33,6 @@ public class PDFmanager {
         PDPage firstPage = document.getPages().get(0);
         stripper.extractRegions(firstPage);
 
-        String column1,column2,column3,remarks;
 
         column1=stripper.getTextForRegion("column1");
 
@@ -36,11 +40,11 @@ public class PDFmanager {
 
         column3=stripper.getTextForRegion("column3");
 
-        remarks = stripper.getTextForRegion("remarks");
+        String remarksString = stripper.getTextForRegion("remarks");
 
         String all=column1+column2+column3;
         if(hasRemarks(all)){
-            resolveRemarks(remarks);
+            resolveRemarks(remarksString);
             System.out.println(all);
         }
         document.close();
@@ -52,7 +56,7 @@ public class PDFmanager {
     }
 
     private ArrayList<Remark> resolveRemarks(String text){
-        ArrayList<Remark> remarks=new ArrayList<Remark>();
+        remarks=new ArrayList<Remark>();
         text=text.replace(" / ","/");
         for(int i=0;i<text.length();i++){
             if(isMinus(text,i)){
@@ -99,6 +103,22 @@ public class PDFmanager {
             i--;
         }
         return false;
+    }
+
+    public String getColumn1() {
+        return column1;
+    }
+
+    public String getColumn2() {
+        return column2;
+    }
+
+    public String getColumn3() {
+        return column3;
+    }
+
+    public ArrayList<Remark> getRemarks() {
+        return remarks;
     }
 
     private class Remark{

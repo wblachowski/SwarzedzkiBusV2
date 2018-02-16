@@ -24,6 +24,21 @@ public class WebParser {
         return linksMap;
     }
 
+    public String getBusName(String url){
+        String busname="";
+        downloadPage(url);
+        String html=doc.outerHtml();
+        int index=html.indexOf("LINIA ");
+        if(index>=0){
+            index=index+"LINIA ".length();
+            while(index<html.length() && Character.isLetterOrDigit(html.charAt(index))){
+                busname+=html.charAt(index);
+                index++;
+            }
+        }
+        return busname;
+    }
+
     private void downloadPage(String urlString) {
         try {
             doc = Jsoup.connect(urlString).get();
