@@ -31,17 +31,22 @@ public class BusParser {
             initialize();
             Map<String, String> linksToBuses = webParser.retrieveLinks(urlToBuses, ".*lista.htm");
             for (Map.Entry<String, String> entry : linksToBuses.entrySet()) {
-                dataBaseManager.insertBus(webParser.getBusName(entry.getKey()));
                 Map<String, String> linksLeftStops = webParser.retrieveLeftLinks(entry.getKey(), ".*\\.pdf");
                 Map<String,String> linksRightStops = webParser.retrieveRightLinks(entry.getKey(),".*\\.pdf");
+                String busName=webParser.getBusName(entry.getKey());
+                dataBaseManager.insertBus(busName);
                 for (Map.Entry<String, String> stopEntry : linksLeftStops.entrySet()) {
                     System.out.println("LEFT: " + stopEntry.getKey() + " " + stopEntry.getValue());
                     //if(stopEntry.getKey().endsWith("S4_S007_1.pdf"))
                     //    handlePDF(stopEntry.getKey(), stopEntry.getValue());
+                    dataBaseManager.insertStop(stopEntry.getKey(),stopEntry.getValue());
                 }
                 for(Map.Entry<String,String> stopEntry : linksRightStops.entrySet()){
                     System.out.println("RIGHT: " + stopEntry.getKey() + " " + stopEntry.getValue());
+                    dataBaseManager.insertStop(stopEntry.getKey(),stopEntry.getValue());
                 }
+                dataBaseManager.insertRoute(busName,linksLeftStops);
+                dataBaseManager.insertRoute(busName,linksRightStops);
                 System.out.println();
             }
         } catch (Exception ex) {
