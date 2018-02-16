@@ -92,9 +92,9 @@ public class DataBaseManager {
         }
     }
 
-    private int resolveRegion(String busname){
-        if(busname.startsWith("49"))return 1;
-        if(busname.startsWith("48"))return 2;
+    private int resolveRegion(String busName){
+        if(busName.startsWith("49"))return 1;
+        if(busName.startsWith("48"))return 2;
         return 0;
     }
 
