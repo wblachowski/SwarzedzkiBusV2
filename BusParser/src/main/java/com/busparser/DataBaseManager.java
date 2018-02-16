@@ -35,17 +35,46 @@ public class DataBaseManager {
             pstmt.setString(1, busName);
             pstmt.setInt(2, region);
             pstmt.executeUpdate();
-            System.out.println("Bus " + busName + " inserted");
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
     }
 
+    static int routeID=0;
     public void insertRoute(String busName, Map<String, String> stops) {
+        String sql="INSERT INTO routes VALUES(?,?,?)";
+        int i=0;
+        for(Map.Entry<String,String> stopEntry : stops.entrySet()) {
+            try (Connection conn = DriverManager.getConnection(url);
+                 PreparedStatement pstmt = conn.prepareStatement(sql)) {
+                pstmt.setInt(1, routeID);
+                pstmt.setInt(2, i++);
+                pstmt.setString(3,resolveStopName(stopEntry.getKey()));
+                pstmt.executeUpdate();
+            } catch (SQLException e) {
+                System.out.println(e.getMessage());
+            }
+        }
+        if(stops.size()>0) {
+            insertBusesRoutes(busName, routeID);
+            routeID++;
+        }
+    }
+
+    private void insertBusesRoutes(String busName,int route_id){
+        String sql="INSERT INTO buses_routes VALUES(?,?)";
+        try (Connection conn = DriverManager.getConnection(url);
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, busName);
+            pstmt.setInt(2, route_id);
+            pstmt.executeUpdate();
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
     }
 
     public void insertStop(String stopUrl, String stopName) {
-        String id=stopUrl.substring(stopUrl.lastIndexOf("/")+1,stopUrl.length());
+        String id = resolveStopName(stopUrl);
         String sql = "INSERT INTO stops VALUES(?,?)";
         try (Connection conn = DriverManager.getConnection(url);
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -113,9 +142,10 @@ public class DataBaseManager {
 
     private void initializeRoutes() {
         String sql = "CREATE TABLE IF NOT EXISTS routes (\n"
-                + " id INTEGER PRIMARY KEY, \n"
+                + " id INTEGER, \n"
                 + " stop_order INTEGER, \n"
                 + " stop_id INTEGER, \n"
+                + " PRIMARY KEY(id,stop_order), \n"
                 + " FOREIGN KEY(stop_id) REFERENCES stops(id) \n"
                 + ");";
         createTable(sql);
@@ -141,6 +171,10 @@ public class DataBaseManager {
         if (busName.startsWith("49")) return 1;
         if (busName.startsWith("48")) return 2;
         return 0;
+    }
+
+    private String resolveStopName(String stopUrl){
+        return stopUrl.substring(stopUrl.lastIndexOf("/") + 1, stopUrl.length());
     }
 
     private void loadProperties() {
