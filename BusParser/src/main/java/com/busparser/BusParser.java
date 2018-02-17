@@ -32,22 +32,24 @@ public class BusParser {
             Map<String, String> linksToBuses = webParser.retrieveLinks(urlToBuses, ".*lista.htm");
             for (Map.Entry<String, String> entry : linksToBuses.entrySet()) {
                 Map<String, String> linksLeftStops = webParser.retrieveLeftLinks(entry.getKey(), ".*\\.pdf");
-                Map<String,String> linksRightStops = webParser.retrieveRightLinks(entry.getKey(),".*\\.pdf");
-                String busName=webParser.getBusName(entry.getKey());
+                Map<String, String> linksRightStops = webParser.retrieveRightLinks(entry.getKey(), ".*\\.pdf");
+                String busName = webParser.getBusName(entry.getKey());
                 dataBaseManager.insertBus(busName);
                 for (Map.Entry<String, String> stopEntry : linksLeftStops.entrySet()) {
                     System.out.println("LEFT: " + stopEntry.getKey() + " " + stopEntry.getValue());
-                    //if(stopEntry.getKey().endsWith("S4_S007_1.pdf"))
-                        handlePDF(stopEntry.getKey(), stopEntry.getValue());
-                    dataBaseManager.insertStop(stopEntry.getKey(),stopEntry.getValue());
-                }
-                for(Map.Entry<String,String> stopEntry : linksRightStops.entrySet()){
-                    System.out.println("RIGHT: " + stopEntry.getKey() + " " + stopEntry.getValue());
+                    //if(stopEntry.getKey().endsWith("S8_S044_1.pdf"))
                     handlePDF(stopEntry.getKey(), stopEntry.getValue());
-                    dataBaseManager.insertStop(stopEntry.getKey(),stopEntry.getValue());
+                    dataBaseManager.insertStop(stopEntry.getKey(), stopEntry.getValue());
                 }
-                dataBaseManager.insertRoute(busName,linksLeftStops);
-                dataBaseManager.insertRoute(busName,linksRightStops);
+                for (Map.Entry<String, String> stopEntry : linksRightStops.entrySet()) {
+                    System.out.println("RIGHT: " + stopEntry.getKey() + " " + stopEntry.getValue());
+                    //if(stopEntry.getKey().endsWith("S8_S044_1.pdf"))
+                    handlePDF(stopEntry.getKey(), stopEntry.getValue());
+                    handlePDF(stopEntry.getKey(), stopEntry.getValue());
+                    dataBaseManager.insertStop(stopEntry.getKey(), stopEntry.getValue());
+                }
+                dataBaseManager.insertRoute(busName, linksLeftStops);
+                dataBaseManager.insertRoute(busName, linksRightStops);
                 System.out.println();
             }
         } catch (Exception ex) {
@@ -55,7 +57,7 @@ public class BusParser {
         }
     }
 
-    private void initialize(){
+    private void initialize() {
         java.util.logging.Logger.getLogger("org.apache.pdfbox").setLevel(java.util.logging.Level.OFF);
         loadProperties();
         webParser = new WebParser();
@@ -80,8 +82,8 @@ public class BusParser {
         try {
             fileManager.download(url, "");
             pdfManager.parse(fileManager.getFile());
-            dataBaseManager.insertRemarks(url,pdfManager.getRemarks());
-            dataBaseManager.insertTimes(url,pdfManager.getColumn1(),0);
+            dataBaseManager.insertRemarks(url, pdfManager.getRemarks());
+            dataBaseManager.insertTimes(url, pdfManager.getColumn1(), 0);
         } catch (MalformedURLException ex) {
             ex.printStackTrace();
         } catch (IOException ex) {

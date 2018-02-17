@@ -119,6 +119,8 @@ public class DataBaseManager {
                         insertTime(stopId, type, hour, numberInt);
                     }
                 } catch (NumberFormatException e) {
+                    //we have to connect latest time with our remark
+                    insertTimeRemark(number);
                 }
             }
         }
@@ -132,6 +134,17 @@ public class DataBaseManager {
             pstmt.setInt(2, type);
             pstmt.setInt(3, hour);
             pstmt.setInt(4, minute);
+            pstmt.executeUpdate();
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    private void insertTimeRemark(String remark) {
+        String sql = "UPDATE time_tables SET remark=COALESCE(remark, '') || ? WHERE id=(SELECT MAX(id) FROM time_tables)";
+        try (Connection conn = DriverManager.getConnection(url);
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, remark);
             pstmt.executeUpdate();
         } catch (SQLException e) {
             System.out.println(e.getMessage());
@@ -213,6 +226,7 @@ public class DataBaseManager {
                 + " type INTEGER, \n"
                 + " hour INTEGER, \n"
                 + " minute INTEGER, \n"
+                + " remark TEXT, \n"
                 + " FOREIGN KEY(stop_id) REFERENCES stops(id) \n"
                 + ");";
         createTable(sql);
