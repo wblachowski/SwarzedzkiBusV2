@@ -43,6 +43,7 @@ public class BusParser {
                 }
                 for(Map.Entry<String,String> stopEntry : linksRightStops.entrySet()){
                     System.out.println("RIGHT: " + stopEntry.getKey() + " " + stopEntry.getValue());
+                    handlePDF(stopEntry.getKey(), stopEntry.getValue());
                     dataBaseManager.insertStop(stopEntry.getKey(),stopEntry.getValue());
                 }
                 dataBaseManager.insertRoute(busName,linksLeftStops);
@@ -80,6 +81,7 @@ public class BusParser {
             fileManager.download(url, "");
             pdfManager.parse(fileManager.getFile());
             dataBaseManager.insertRemarks(url,pdfManager.getRemarks());
+            dataBaseManager.insertTimes(url,pdfManager.getColumn1(),0);
         } catch (MalformedURLException ex) {
             ex.printStackTrace();
         } catch (IOException ex) {

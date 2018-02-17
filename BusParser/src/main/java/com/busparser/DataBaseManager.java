@@ -88,10 +88,10 @@ public class DataBaseManager {
         }
     }
 
-    public void insertRemarks(String urlStop, ArrayList<PDFmanager.Remark> remarks){
-        String stopId=resolveStopName(urlStop);
-        String sql="INSERT INTO remarks(stop_id,symbol,description) VALUES(?,?,?)";
-        for(PDFmanager.Remark remark : remarks) {
+    public void insertRemarks(String urlStop, ArrayList<PDFmanager.Remark> remarks) {
+        String stopId = resolveStopName(urlStop);
+        String sql = "INSERT INTO remarks(stop_id,symbol,description) VALUES(?,?,?)";
+        for (PDFmanager.Remark remark : remarks) {
             try (Connection conn = DriverManager.getConnection(url);
                  PreparedStatement pstmt = conn.prepareStatement(sql)) {
                 pstmt.setString(1, stopId);
@@ -102,6 +102,39 @@ public class DataBaseManager {
             } catch (SQLException e) {
                 System.out.println(e.getMessage());
             }
+        }
+    }
+
+    public void insertTimes(String urlStop, String times, int type) {
+        String stopId = resolveStopName(urlStop);
+        for (String line : times.split("\\r?\\n")) {
+            String[] numbers = line.split(" ");
+            int hour = -1;
+            for (String number : numbers) {
+                try {
+                    int numberInt = Integer.parseInt(number);
+                    if (hour < 0) {
+                        hour = numberInt;
+                    } else {
+                        insertTime(stopId, type, hour, numberInt);
+                    }
+                } catch (NumberFormatException e) {
+                }
+            }
+        }
+    }
+
+    private void insertTime(String stopId, int type, int hour, int minute) {
+        String sql = "INSERT INTO time_tables(stop_id,type,hour,minute) VALUES(?,?,?,?)";
+        try (Connection conn = DriverManager.getConnection(url);
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, stopId);
+            pstmt.setInt(2, type);
+            pstmt.setInt(3, hour);
+            pstmt.setInt(4, minute);
+            pstmt.executeUpdate();
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
         }
     }
 
@@ -196,14 +229,14 @@ public class DataBaseManager {
         createTable(sql);
     }
 
-    private void initalizeTimeRemarks(){
-        String sql= "CREATE TABLE IF NOT EXISTS time_remarks (\n"
-                +" time_id INTEGER, \n"
-                +" remark_id INTEGER, \n"
-                +" FOREIGN KEY(time_id) REFERENCES time_tables(id), \n"
-                +" FOREIGN KEY(remark_id) REFERENCES remarks(id), \n"
-                +" PRIMARY KEY(time_id,remark_id) \n"
-                +");";
+    private void initalizeTimeRemarks() {
+        String sql = "CREATE TABLE IF NOT EXISTS time_remarks (\n"
+                + " time_id INTEGER, \n"
+                + " remark_id INTEGER, \n"
+                + " FOREIGN KEY(time_id) REFERENCES time_tables(id), \n"
+                + " FOREIGN KEY(remark_id) REFERENCES remarks(id), \n"
+                + " PRIMARY KEY(time_id,remark_id) \n"
+                + ");";
         createTable(sql);
     }
 
