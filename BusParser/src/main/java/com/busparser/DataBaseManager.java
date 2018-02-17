@@ -142,7 +142,7 @@ public class DataBaseManager {
 
     private void insertTimeRemark(String remark) {
         if(remark.toUpperCase().contains("KURSUJE") || remark.toUpperCase().contains("NIE"))return;
-        String sql = "UPDATE time_tables SET remark=COALESCE(remark, '') || ? WHERE id=(SELECT MAX(id) FROM time_tables)";
+        String sql = "UPDATE time_tables SET remark=COALESCE(remark, '') || ? || ' ' WHERE id=(SELECT MAX(id) FROM time_tables)";
         try (Connection conn = DriverManager.getConnection(url);
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, remark);
