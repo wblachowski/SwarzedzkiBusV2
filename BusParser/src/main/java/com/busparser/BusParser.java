@@ -37,13 +37,11 @@ public class BusParser {
                 dataBaseManager.insertBus(busName);
                 for (Map.Entry<String, String> stopEntry : linksLeftStops.entrySet()) {
                     System.out.println("LEFT: " + stopEntry.getKey() + " " + stopEntry.getValue());
-                    //if(stopEntry.getKey().endsWith("S4_S099_2.pdf"))
                     handlePDF(stopEntry.getKey(), stopEntry.getValue());
                     dataBaseManager.insertStop(stopEntry.getKey(), stopEntry.getValue());
                 }
                 for (Map.Entry<String, String> stopEntry : linksRightStops.entrySet()) {
                     System.out.println("RIGHT: " + stopEntry.getKey() + " " + stopEntry.getValue());
-                    //if(stopEntry.getKey().endsWith("S4_S099_2.pdf"))
                     handlePDF(stopEntry.getKey(), stopEntry.getValue());
                     dataBaseManager.insertStop(stopEntry.getKey(), stopEntry.getValue());
                 }

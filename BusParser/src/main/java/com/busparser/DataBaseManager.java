@@ -169,7 +169,6 @@ public class DataBaseManager {
         initializeBusesRoutes();
         initalizeTimeTables();
         initializeRemarks();
-        initalizeTimeRemarks();
     }
 
     private void initalizeRegions() {
@@ -240,17 +239,6 @@ public class DataBaseManager {
                 + " symbol TEXT, \n"
                 + " description TEXT, \n"
                 + " FOREIGN KEY(stop_id) REFERENCES stops(id) \n"
-                + ");";
-        createTable(sql);
-    }
-
-    private void initalizeTimeRemarks() {
-        String sql = "CREATE TABLE IF NOT EXISTS time_remarks (\n"
-                + " time_id INTEGER, \n"
-                + " remark_id INTEGER, \n"
-                + " FOREIGN KEY(time_id) REFERENCES time_tables(id), \n"
-                + " FOREIGN KEY(remark_id) REFERENCES remarks(id), \n"
-                + " PRIMARY KEY(time_id,remark_id) \n"
                 + ");";
         createTable(sql);
     }
