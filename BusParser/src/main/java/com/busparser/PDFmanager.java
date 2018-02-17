@@ -53,9 +53,9 @@ public class PDFmanager {
     }
 
     private void prepareColumns() {
-        column1 = column1.replace("'", "");
-        column2 = column2.replace("'", "");
-        column3 = column3.replace("'", "");
+        column1 = column1.replace("'", "").replace("#ADR!","");
+        column2 = column2.replace("'", "").replace("#ADR!","");
+        column3 = column3.replace("'", "").replace("#ADR!","");
     }
 
     private boolean hasRemarks(String text) {

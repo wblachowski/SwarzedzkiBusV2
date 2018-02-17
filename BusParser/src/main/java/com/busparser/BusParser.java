@@ -37,14 +37,13 @@ public class BusParser {
                 dataBaseManager.insertBus(busName);
                 for (Map.Entry<String, String> stopEntry : linksLeftStops.entrySet()) {
                     System.out.println("LEFT: " + stopEntry.getKey() + " " + stopEntry.getValue());
-                    //if(stopEntry.getKey().endsWith("S8_S044_1.pdf"))
+                    //if(stopEntry.getKey().endsWith("S4_S099_2.pdf"))
                     handlePDF(stopEntry.getKey(), stopEntry.getValue());
                     dataBaseManager.insertStop(stopEntry.getKey(), stopEntry.getValue());
                 }
                 for (Map.Entry<String, String> stopEntry : linksRightStops.entrySet()) {
                     System.out.println("RIGHT: " + stopEntry.getKey() + " " + stopEntry.getValue());
-                    //if(stopEntry.getKey().endsWith("S8_S044_1.pdf"))
-                    handlePDF(stopEntry.getKey(), stopEntry.getValue());
+                    //if(stopEntry.getKey().endsWith("S4_S099_2.pdf"))
                     handlePDF(stopEntry.getKey(), stopEntry.getValue());
                     dataBaseManager.insertStop(stopEntry.getKey(), stopEntry.getValue());
                 }
@@ -84,6 +83,8 @@ public class BusParser {
             pdfManager.parse(fileManager.getFile());
             dataBaseManager.insertRemarks(url, pdfManager.getRemarks());
             dataBaseManager.insertTimes(url, pdfManager.getColumn1(), 0);
+            dataBaseManager.insertTimes(url, pdfManager.getColumn2(), 1);
+            dataBaseManager.insertTimes(url, pdfManager.getColumn3(), 2);
         } catch (MalformedURLException ex) {
             ex.printStackTrace();
         } catch (IOException ex) {
