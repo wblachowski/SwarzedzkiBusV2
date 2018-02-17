@@ -42,10 +42,10 @@ public class PDFmanager {
 
         String remarksString = stripper.getTextForRegion("remarks");
 
+        remarks = new ArrayList<>();
         String all=column1+column2+column3;
         if(hasRemarks(all)){
             resolveRemarks(remarksString);
-            System.out.println(all);
         }
         document.close();
     }
@@ -121,7 +121,7 @@ public class PDFmanager {
         return remarks;
     }
 
-    private class Remark{
+    public class Remark{
         String title;
         String description;
         public Remark(String title, String description){
