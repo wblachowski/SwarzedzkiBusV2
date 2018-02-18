@@ -44,8 +44,10 @@ public class WebParser {
             cells.removeIf(cell->{return Integer.parseInt(cell.attr("width").replace("%",""))<30;});
             Elements links = cells.get(column).select("a");
             links.removeIf(link->{return !link.attr("href").contains(".pdf");});
-            if(links.size()>0){
-                linksMap.put(getFullLink(url,links.get(0).attr("href")),links.get(0).text());
+            for(Element link : links){
+                if(!link.text().isEmpty()){
+                    linksMap.put(getFullLink(url,link.attr("href")),link.text());
+                }
             }
         }
         return linksMap;
