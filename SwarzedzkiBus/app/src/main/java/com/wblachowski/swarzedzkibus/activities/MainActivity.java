@@ -12,9 +12,12 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.wblachowski.swarzedzkibus.R;
+import com.wblachowski.swarzedzkibus.data.DataBaseHelper;
 import com.wblachowski.swarzedzkibus.fragments.AllFragment;
 import com.wblachowski.swarzedzkibus.fragments.FavouritesFragment;
 import com.wblachowski.swarzedzkibus.fragments.SearchFragment;
+
+import java.io.IOException;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -32,11 +35,14 @@ public class MainActivity extends AppCompatActivity {
      * The {@link ViewPager} that will host the section contents.
      */
     private ViewPager mViewPager;
+    private DataBaseHelper myDbHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        createDataBase();
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -77,6 +83,35 @@ public class MainActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    public DataBaseHelper getDataBaseHelper(){
+        return myDbHelper;
+    }
+
+    private void createDataBase(){
+        myDbHelper = new DataBaseHelper(this);
+        myDbHelper = new DataBaseHelper(this);
+
+        try {
+
+            myDbHelper.createDataBase();
+
+        } catch (IOException ioe) {
+
+            System.out.println(ioe.getMessage());
+
+        }
+
+        try {
+
+            myDbHelper.openDataBase();
+
+        }catch(Exception sqle){
+
+            System.out.println(sqle.getMessage());
+
+        }
     }
 
     /**
