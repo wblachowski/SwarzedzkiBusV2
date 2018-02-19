@@ -40,6 +40,7 @@ public class TimeAdapter extends ArrayAdapter<Hour> {
 
         TextView hour = v.findViewById(R.id.time_item_hour);
         LinearLayout layout = v.findViewById(R.id.time_item_minutes_layout);
+        layout.removeAllViews();
         for(Integer minute : hours.get(position).getMinutes()){
             layout.addView(prepareMinutTextView(v.getContext(),minute));
         }
