@@ -1,13 +1,14 @@
 package com.wblachowski.swarzedzkibus.adapters;
 
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.codewaves.stickyheadergrid.StickyHeaderGridAdapter;
 import com.wblachowski.swarzedzkibus.R;
+import com.wblachowski.swarzedzkibus.activities.StopsActivity;
 import com.wblachowski.swarzedzkibus.data.Bus;
 
 import java.util.ArrayList;
@@ -66,8 +67,13 @@ public class AllAdapter  extends StickyHeaderGridAdapter {
             public void onClick(View v) {
                 final int section = getAdapterPositionSection(holder.getAdapterPosition());
                 final int offset = getItemSectionOffset(section, holder.getAdapterPosition());
+                Bus bus=buses.get(section).get(offset);
 
-                Toast.makeText(holder.nrView.getContext(), "Clicked", Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(v.getContext(), StopsActivity.class);
+                intent.putExtra("nr",bus.getNr());
+                intent.putExtra("from",bus.getFrom());
+                intent.putExtra("to",bus.getTo());
+                v.getContext().startActivity(intent);
             }
         });
     }

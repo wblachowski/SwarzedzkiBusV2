@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:paddingTop="5dp"
+    android:paddingBottom="12dp"
+    android:layout_height="wrap_content"
+    android:id="@+id/bus_item"
+    android:focusable="true"
+    android:clickable="true"
+    android:foreground="?android:attr/selectableItemBackground">
+    <TextView
+        android:id="@+id/bus_nr"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center_horizontal"
+        android:text="401"
+        android:textColor="@color/colorPrimaryDark"
+        android:textSize="36sp"
+        android:layout_marginBottom="-5dp"/>
+
+    <TextView
+        android:id="@+id/bus_from"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:textColor="@color/colorMain"
+        android:gravity="center_horizontal"
+        android:text="Poznań Śródka" />
+    <TextView
+        android:id="@+id/bus_to"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:textColor="@color/colorMain"
+        android:gravity="center_horizontal"
+        android:text="Kościuszkowców" />
+</LinearLayout>
