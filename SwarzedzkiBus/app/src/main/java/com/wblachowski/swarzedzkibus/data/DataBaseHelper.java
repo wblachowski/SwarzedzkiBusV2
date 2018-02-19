@@ -191,4 +191,14 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         }
     }
 
+    public Cursor getStopsTimes(String stopId, int type){
+        String query = "SELECT DISTINCT stop_id, type, hour,minute,remark FROM time_tables WHERE stop_id=? AND type=?";
+        try {
+            return myDataBase.rawQuery(query, new String[]{stopId,new Integer(type).toString()});
+        } catch (Exception ex) {
+            System.out.println(ex.getMessage());
+            return null;
+        }
+    }
+
 }
