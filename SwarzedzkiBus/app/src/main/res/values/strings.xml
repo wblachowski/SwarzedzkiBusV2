@@ -3,4 +3,6 @@
     <string name="action_refresh">Pobierz rozkład</string>
     <string name="action_settings">Ustawienia</string>
     <string name="action_about">O aplikacji</string>
+    <string name="title_activity_time_table">TimeTableActivity</string>
+    <string name="section_format">Hello World from section: %1$d</string>
 </resources>
