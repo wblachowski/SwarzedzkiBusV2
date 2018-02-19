@@ -7,6 +7,7 @@
     tools:context="com.wblachowski.swarzedzkibus.activities.StopsActivity">
 
     <ListView
+        android:id="@+id/stops_list_view"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"/>
 </android.support.constraint.ConstraintLayout>

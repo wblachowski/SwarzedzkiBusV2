@@ -90,8 +90,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void createDataBase(){
-        myDbHelper = new DataBaseHelper(this);
-        myDbHelper = new DataBaseHelper(this);
+        myDbHelper = DataBaseHelper.getInstance(this);
 
         try {
 

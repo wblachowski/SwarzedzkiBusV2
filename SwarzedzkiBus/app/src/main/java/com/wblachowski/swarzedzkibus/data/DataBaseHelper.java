@@ -17,6 +17,8 @@ import java.io.OutputStream;
  */
 
 public class DataBaseHelper extends SQLiteOpenHelper {
+
+    private static DataBaseHelper instance;
     //The Android's default system path of your application database.
     private static String DB_PATH = "/data/data/com.wblachowski.swarzedzkibus/databases/";
 
@@ -32,7 +34,15 @@ public class DataBaseHelper extends SQLiteOpenHelper {
      *
      * @param context
      */
-    public DataBaseHelper(Context context) {
+
+    public static synchronized DataBaseHelper getInstance(Context context) {
+        if (instance == null) {
+            instance = new DataBaseHelper(context.getApplicationContext());
+        }
+        return instance;
+    }
+
+    private DataBaseHelper(Context context) {
 
         super(context, DB_NAME, null, 1);
         this.myContext = context;
@@ -164,6 +174,17 @@ public class DataBaseHelper extends SQLiteOpenHelper {
                 " order by region_id";
         try {
             return myDataBase.rawQuery(query, null);
+        } catch (Exception ex) {
+            System.out.println(ex.getMessage());
+            return null;
+        }
+    }
+
+    public Cursor getStopsCursor(String routeId) {
+        String query = "SELECT routes.rowid _id, bus_name, routes.id, stop_order, stop_id,stops.name from buses_routes join routes on buses_routes.route_id=routes.id join stops on stops.id=stop_id \n" +
+                " WHERE routes.id = ? order by routes.id, stop_order";
+        try {
+            return myDataBase.rawQuery(query, new String[]{routeId});
         } catch (Exception ex) {
             System.out.println(ex.getMessage());
             return null;
