@@ -71,8 +71,7 @@ public class AllAdapter  extends StickyHeaderGridAdapter {
 
                 Intent intent = new Intent(v.getContext(), StopsActivity.class);
                 intent.putExtra("nr",bus.getNr());
-                intent.putExtra("from",bus.getFrom());
-                intent.putExtra("to",bus.getTo());
+                intent.putExtra("routeId",bus.getRouteId());
                 v.getContext().startActivity(intent);
             }
         });

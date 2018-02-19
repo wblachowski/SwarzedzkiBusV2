@@ -58,7 +58,9 @@ public class AllFragment extends Fragment {
                 String region = cursor.getString(cursor.getColumnIndex("region_name"));
                 String startStop = cursor.getString(cursor.getColumnIndex("START_STOP"));
                 String endStop = cursor.getString(cursor.getColumnIndex("END_STOP"));
+                String routeId=cursor.getString(cursor.getColumnIndex("ROUTE_ID_A"));
                 Bus bus = new Bus(busNr, startStop, endStop);
+                bus.setRouteId(routeId);
                 if (!headers.contains(region)) {
                     headers.add(region);
                     buses.add(new ArrayList<Bus>());

@@ -12,7 +12,7 @@ public class StopsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_stops);
         String nr=getIntent().getStringExtra("nr").toString();
-        String to=getIntent().getStringExtra("to").toString();
-        setTitle("Linia " + nr);
+        String routeId=getIntent().getStringExtra("routeId").toString();
+        setTitle("Linia " + nr + " route " + routeId);
     }
 }

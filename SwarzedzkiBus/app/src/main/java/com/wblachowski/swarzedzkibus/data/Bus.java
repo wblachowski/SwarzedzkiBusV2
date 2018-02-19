@@ -8,6 +8,9 @@ public class Bus {
     String nr;
     String from;
     String to;
+
+    String routeId;
+
     public Bus(String nr,String from,String to){
         this.nr=nr;
         this.from=from;
@@ -24,5 +27,13 @@ public class Bus {
 
     public String getTo() {
         return to;
+    }
+
+    public String getRouteId() {
+        return routeId;
+    }
+
+    public void setRouteId(String routeId){
+        this.routeId=routeId;
     }
 }
