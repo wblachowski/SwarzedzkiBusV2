@@ -18,11 +18,11 @@ public class StopsActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_stops);
-        String nr=getIntent().getStringExtra("nr").toString();
-        String routeId=getIntent().getStringExtra("routeId").toString();
+        final String nr=getIntent().getStringExtra("nr").toString();
+        final String routeId=getIntent().getStringExtra("routeId").toString();
         setTitle("Linia " + nr);
 
-        Cursor cursor = DataBaseHelper.getInstance(this).getStopsCursor(routeId);
+        final Cursor cursor = DataBaseHelper.getInstance(this).getStopsCursor(routeId);
         ListView listView = (ListView)findViewById(R.id.stops_list_view);
         StopsCursorAdapter cursorAdapter = new StopsCursorAdapter(this,cursor);
         listView.setAdapter(cursorAdapter);
@@ -33,7 +33,12 @@ public class StopsActivity extends AppCompatActivity {
                                     long id) {
 
                 Intent intent = new Intent(v.getContext(), TimeTableActivity.class);
-
+                cursor.moveToPosition(position);
+                intent.putExtra("nr",nr);
+                intent.putExtra("id",cursor.getString(cursor.getColumnIndex("stop_id")));
+                intent.putExtra("stopName",cursor.getString(cursor.getColumnIndex("name")));
+                cursor.moveToLast();
+                intent.putExtra("direction",cursor.getString(cursor.getColumnIndex("name")));
                 startActivity(intent);
             }
         });

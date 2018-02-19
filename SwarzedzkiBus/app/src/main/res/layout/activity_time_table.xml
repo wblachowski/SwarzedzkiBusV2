@@ -32,6 +32,7 @@
                 android:layout_height="match_parent">
 
                 <TextView
+                    android:id="@+id/time_table_bus_nr"
                     android:layout_width="80dp"
                     android:layout_height="match_parent"
                     android:gravity="center"
@@ -54,6 +55,7 @@
                             android:text="Przystanek:"
                             android:textSize="11dp"/>
                         <TextView
+                            android:id="@+id/time_table_stop_name"
                             android:layout_marginTop="-2dp"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
@@ -73,6 +75,7 @@
                             android:text="Kierunek:"
                             android:textSize="11dp"/>
                         <TextView
+                            android:id="@+id/time_table_direction"
                             android:layout_marginTop="-2dp"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"

@@ -52,7 +52,16 @@ public class TimeTableActivity extends AppCompatActivity {
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(mViewPager);
 
+        setToolbarInfo();
+    }
 
+    private void setToolbarInfo() {
+        TextView nr =(TextView) findViewById(R.id.time_table_bus_nr);
+        TextView stopName = (TextView) findViewById(R.id.time_table_stop_name);
+        TextView direction = (TextView) findViewById(R.id.time_table_direction);
+        nr.setText(getIntent().getStringExtra("nr").toString());
+        stopName.setText(getIntent().getStringExtra("stopName").toString());
+        direction.setText(getIntent().getStringExtra("direction").toString());
     }
 
 
