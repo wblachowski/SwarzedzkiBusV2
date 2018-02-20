@@ -5,7 +5,7 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
+import android.widget.LinearLayout;
 
 import com.wblachowski.swarzedzkibus.R;
 
@@ -15,13 +15,15 @@ import com.wblachowski.swarzedzkibus.R;
 
 public class FavouritesFragment extends Fragment {
 
+    LinearLayout noFavouritesLayout;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_favourites, container, false);
-        TextView textView = (TextView) rootView.findViewById(R.id.section_label);
+        noFavouritesLayout = (LinearLayout) rootView.findViewById(R.id.fragment_favourites_empty_layout);
 
-        textView.setText("Favourites");
+        noFavouritesLayout.setVisibility(View.VISIBLE);
         return rootView;
     }
 }
