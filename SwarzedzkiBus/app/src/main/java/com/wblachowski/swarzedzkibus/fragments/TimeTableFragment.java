@@ -135,6 +135,38 @@ public class TimeTableFragment extends Fragment {
             } while (cursor.moveToNext());
         }
         cursor.close();
-        return hours;
+        return stripHours(hours);
     }
+
+    private ArrayList<Hour> stripHours(ArrayList<Hour> hours) {
+        ArrayList<Hour> strippedHours = new ArrayList<>();
+        int minHour = getMinHour(hours);
+        int maxHour = getMaxHour(hours);
+        for(int i=0;i<hours.size();i++){
+            if(i>=minHour && i<=maxHour){
+                strippedHours.add(hours.get(i));
+            }
+        }
+        return strippedHours;
+    }
+
+    private int getMaxHour(ArrayList<Hour> hours) {
+        for(int i=hours.size()-1;i>=0;i--){
+            if(hours.get(i).getMinutes().size()>0){
+                return i;
+            }
+        }
+        return hours.size();
+    }
+
+    private int getMinHour(ArrayList<Hour> hours) {
+        for(int i=0;i<hours.size();i++){
+            if(hours.get(i).getMinutes().size()>0){
+                return i;
+            }
+        }
+        return hours.size();
+    }
+
+
 }
