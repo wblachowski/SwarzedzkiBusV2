@@ -30,12 +30,14 @@ public class TimeTableFragment extends Fragment {
     int type;
     String stopId;
     ListView listView;
+    LinearLayout noHoursLayout;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_time_table, container, false);
         listView = (ListView) rootView.findViewById(R.id.time_table_listview);
+        noHoursLayout = (LinearLayout) rootView.findViewById(R.id.time_table_no_hours_layout);
         loadTimes();
         return rootView;
     }
@@ -51,11 +53,20 @@ public class TimeTableFragment extends Fragment {
     public void loadTimes() {
         Cursor cursor = DataBaseHelper.getInstance(getContext()).getStopsTimes(stopId, type);
         ArrayList<Hour> hours = loadHoursFromCursor(cursor);
+        showOrHideHours(hours);
         TimeAdapter adapter = new TimeAdapter(getActivity(), R.layout.time_item, hours);
         if (isAnyRemarks(hours)) {
             addRemarksFooter(listView);
         }
         listView.setAdapter(adapter);
+    }
+
+    private void showOrHideHours(ArrayList<Hour> hours) {
+        if(hours.size()>0){
+            noHoursLayout.setVisibility(View.INVISIBLE);
+        }else{
+            noHoursLayout.setVisibility(View.VISIBLE);
+        }
     }
 
     private boolean isAnyRemarks(ArrayList<Hour> hours) {
@@ -143,7 +154,7 @@ public class TimeTableFragment extends Fragment {
         int minHour = getMinHour(hours);
         int maxHour = getMaxHour(hours);
         for(int i=0;i<hours.size();i++){
-            if(i>=minHour && i<=maxHour){
+            if(i>=minHour && i<=maxHour && hours.get(i).getMinutes().size()>0){
                 strippedHours.add(hours.get(i));
             }
         }
