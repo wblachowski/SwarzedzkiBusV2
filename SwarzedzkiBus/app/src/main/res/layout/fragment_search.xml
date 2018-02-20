@@ -7,14 +7,32 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.wblachowski.swarzedzkibus.activities.MainActivity">
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
 
-    <EditText
-        android:id="@+id/editText"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
-        android:ems="10"
-        android:inputType="textPersonName"
-        android:hint="Nazwa przystanku"/>
+
+        <EditText
+            android:id="@+id/editText"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:paddingRight="28dp"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:ems="10"
+            android:hint="Nazwa przystanku"
+            android:inputType="textPersonName" />
+
+        <Button
+            android:id="@+id/clear_button"
+            android:visibility="invisible"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_gravity="right|center_vertical"
+            android:layout_marginRight="4dp"
+            android:backgroundTint="@color/colorDetails"
+            android:background="@drawable/ic_clear_black_24dp" />
+
+
+    </FrameLayout>
 </RelativeLayout>
