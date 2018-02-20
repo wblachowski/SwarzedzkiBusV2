@@ -154,7 +154,7 @@ public class TimeTableFragment extends Fragment {
         int minHour = getMinHour(hours);
         int maxHour = getMaxHour(hours);
         for(int i=0;i<hours.size();i++){
-            if(i>=minHour && i<=maxHour && hours.get(i).getMinutes().size()>0){
+            if(i>=minHour && i<=maxHour){
                 strippedHours.add(hours.get(i));
             }
         }
