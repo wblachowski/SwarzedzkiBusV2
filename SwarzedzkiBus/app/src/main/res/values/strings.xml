@@ -2,7 +2,7 @@
     <string name="app_name">Swarzędzki Bus</string>
     <string name="action_refresh">Pobierz rozkład</string>
     <string name="action_settings">Ustawienia</string>
-    <string name="action_about">O aplikacji</string>
+    <string name="action_about">Informacje</string>
     <string name="action_favourite">Dodaj do ulubionych</string>
     <string name="title_activity_time_table">TimeTableActivity</string>
     <string name="section_format">Hello World from section: %1$d</string>
