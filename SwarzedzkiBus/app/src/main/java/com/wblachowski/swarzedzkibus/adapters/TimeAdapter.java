@@ -26,7 +26,7 @@ public class TimeAdapter extends ArrayAdapter<Hour> {
 
     public TimeAdapter(Context context, int resource, ArrayList<Hour> items) {
         super(context, resource, items);
-        hours=items;
+        hours = items;
     }
 
     @Override
@@ -36,34 +36,51 @@ public class TimeAdapter extends ArrayAdapter<Hour> {
         if (v == null) {
             LayoutInflater vi;
             vi = LayoutInflater.from(getContext());
-            v = vi.inflate(R.layout.time_item, parent,false);
+            v = vi.inflate(R.layout.time_item, parent, false);
         }
 
         TextView hour = v.findViewById(R.id.time_item_hour);
         FlexboxLayout layout = v.findViewById(R.id.time_item_minutes_layout);
         layout.removeAllViews();
-        for(int i=0;i<hours.get(position).getMinutes().size();i++){
-            layout.addView(prepareMinutTextView(v.getContext(),hours.get(position).getMinutes().get(i),hours.get(position).getRemarks().get(i)));
-            layout.addView(prepareMinutTextView(v.getContext(),hours.get(position).getMinutes().get(i),hours.get(position).getRemarks().get(i)));
-            layout.addView(prepareMinutTextView(v.getContext(),hours.get(position).getMinutes().get(i),hours.get(position).getRemarks().get(i)));
-            layout.addView(prepareMinutTextView(v.getContext(),hours.get(position).getMinutes().get(i),hours.get(position).getRemarks().get(i)));
-
+        for (int i = 0; i < hours.get(position).getMinutes().size(); i++) {
+            layout.addView(prepareMinuteView(v.getContext(), hours.get(position).getMinutes().get(i), hours.get(position).getRemarks().get(i)));
         }
         hour.setText(String.valueOf(hours.get(position).getHour()));
 
         return v;
     }
 
-    private TextView prepareMinutTextView(Context context,int minute,String remark){
+    private LinearLayout prepareMinuteView(Context context, int minute, String remark) {
+        LinearLayout parent = new LinearLayout(context);
+        parent.setLayoutParams(new LinearLayout.LayoutParams((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 36, context.getResources().getDisplayMetrics()), LinearLayout.LayoutParams.WRAP_CONTENT));
+        parent.setOrientation(LinearLayout.HORIZONTAL);
+        TextView minuteText = prepareMinuteText(context, minute);
+        TextView remarkText = prepareRemarkText(context, remark);
+        parent.addView(minuteText);
+        parent.addView(remarkText);
+        return parent;
+    }
+
+    private TextView prepareMinuteText(Context context, int minute) {
         TextView textView = new TextView(context);
-        LinearLayout.LayoutParams tvParams = new LinearLayout.LayoutParams((int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 36, context.getResources().getDisplayMetrics()), LinearLayout.LayoutParams.MATCH_PARENT);
+        LinearLayout.LayoutParams tvParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
         textView.setLayoutParams(tvParams);
         textView.setGravity(Gravity.CENTER_VERTICAL);
-        if(remark==null){
-            remark="";
-        }
-        textView.setText(String.format("%02d", minute)+" "+remark);
+        textView.setText(String.format("%02d", minute));
         textView.setTextSize(18);
+        return textView;
+    }
+
+    private TextView prepareRemarkText(Context context, String remark) {
+        TextView textView = new TextView(context);
+        LinearLayout.LayoutParams tvParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.MATCH_PARENT);
+        textView.setLayoutParams(tvParams);
+        textView.setGravity(Gravity.LEFT | Gravity.TOP);
+        if (remark == null) remark = "";
+        textView.setText(remark);
+        textView.setTextSize(12);
+        textView.setPadding(4,5,0,0);
+        textView.setTextColor(context.getResources().getColor(R.color.colorPrimaryDark));
         return textView;
     }
 
