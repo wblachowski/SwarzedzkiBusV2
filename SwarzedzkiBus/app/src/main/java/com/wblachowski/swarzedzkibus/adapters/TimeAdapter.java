@@ -32,21 +32,25 @@ public class TimeAdapter extends ArrayAdapter<Hour> {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         View v = convertView;
+        try {
 
-        if (v == null) {
-            LayoutInflater vi;
-            vi = LayoutInflater.from(getContext());
-            v = vi.inflate(R.layout.time_item, parent, false);
+
+            if (v == null) {
+                LayoutInflater vi;
+                vi = LayoutInflater.from(getContext());
+                v = vi.inflate(R.layout.time_item, parent, false);
+            }
+
+            TextView hour = v.findViewById(R.id.time_item_hour);
+            FlexboxLayout layout = v.findViewById(R.id.time_item_minutes_layout);
+            layout.removeAllViews();
+            for (int i = 0; i < hours.get(position).getMinutes().size(); i++) {
+                layout.addView(prepareMinuteView(v.getContext(), hours.get(position).getMinutes().get(i), hours.get(position).getRemarks().get(i)));
+            }
+            hour.setText(String.valueOf(hours.get(position).getHour()));
+        }catch(Exception ex){
+            System.out.println(ex.getMessage());
         }
-
-        TextView hour = v.findViewById(R.id.time_item_hour);
-        FlexboxLayout layout = v.findViewById(R.id.time_item_minutes_layout);
-        layout.removeAllViews();
-        for (int i = 0; i < hours.get(position).getMinutes().size(); i++) {
-            layout.addView(prepareMinuteView(v.getContext(), hours.get(position).getMinutes().get(i), hours.get(position).getRemarks().get(i)));
-        }
-        hour.setText(String.valueOf(hours.get(position).getHour()));
-
         return v;
     }
 

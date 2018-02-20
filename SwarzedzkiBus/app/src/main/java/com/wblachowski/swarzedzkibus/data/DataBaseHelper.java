@@ -201,4 +201,14 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         }
     }
 
+    public Cursor getRemarksByStop(String stopId){
+        String query="SELECT DISTINCT symbol,description FROM remarks WHERE stop_id=?";
+        try{
+            return myDataBase.rawQuery(query,new String[]{stopId});
+        }catch(Exception ex){
+            System.out.println(ex.getMessage());
+            return null;
+        }
+    }
+
 }
