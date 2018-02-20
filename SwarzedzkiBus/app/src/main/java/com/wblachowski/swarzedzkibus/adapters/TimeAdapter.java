@@ -10,6 +10,7 @@ import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.google.android.flexbox.FlexboxLayout;
 import com.wblachowski.swarzedzkibus.R;
 import com.wblachowski.swarzedzkibus.data.Hour;
 
@@ -39,22 +40,29 @@ public class TimeAdapter extends ArrayAdapter<Hour> {
         }
 
         TextView hour = v.findViewById(R.id.time_item_hour);
-        LinearLayout layout = v.findViewById(R.id.time_item_minutes_layout);
+        FlexboxLayout layout = v.findViewById(R.id.time_item_minutes_layout);
         layout.removeAllViews();
-        for(Integer minute : hours.get(position).getMinutes()){
-            layout.addView(prepareMinutTextView(v.getContext(),minute));
+        for(int i=0;i<hours.get(position).getMinutes().size();i++){
+            layout.addView(prepareMinutTextView(v.getContext(),hours.get(position).getMinutes().get(i),hours.get(position).getRemarks().get(i)));
+            layout.addView(prepareMinutTextView(v.getContext(),hours.get(position).getMinutes().get(i),hours.get(position).getRemarks().get(i)));
+            layout.addView(prepareMinutTextView(v.getContext(),hours.get(position).getMinutes().get(i),hours.get(position).getRemarks().get(i)));
+            layout.addView(prepareMinutTextView(v.getContext(),hours.get(position).getMinutes().get(i),hours.get(position).getRemarks().get(i)));
+
         }
         hour.setText(String.valueOf(hours.get(position).getHour()));
 
         return v;
     }
 
-    private TextView prepareMinutTextView(Context context,int minute){
+    private TextView prepareMinutTextView(Context context,int minute,String remark){
         TextView textView = new TextView(context);
         LinearLayout.LayoutParams tvParams = new LinearLayout.LayoutParams((int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 36, context.getResources().getDisplayMetrics()), LinearLayout.LayoutParams.MATCH_PARENT);
         textView.setLayoutParams(tvParams);
         textView.setGravity(Gravity.CENTER_VERTICAL);
-        textView.setText(String.format("%02d", minute));
+        if(remark==null){
+            remark="";
+        }
+        textView.setText(String.format("%02d", minute)+" "+remark);
         textView.setTextSize(18);
         return textView;
     }

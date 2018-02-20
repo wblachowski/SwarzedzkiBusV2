@@ -1,23 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="horizontal" android:layout_width="match_parent"
-    android:layout_height="42dp">
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingTop="8dp"
+    android:paddingBottom="8dp">
     <TextView
         android:layout_marginLeft="12dp"
         android:id="@+id/time_item_hour"
         android:layout_width="24dp"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:gravity="right|center_vertical"
         android:text="10"
         android:textSize="18dp"
         android:textStyle="bold"/>
 
-    <LinearLayout
+    <com.google.android.flexbox.FlexboxLayout
+        xmlns:app="http://schemas.android.com/apk/res-auto"
         android:id="@+id/time_item_minutes_layout"
-        android:orientation="horizontal"
+        app:flexWrap="wrap"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:layout_marginLeft="24dp">
 
-    </LinearLayout>
+    </com.google.android.flexbox.FlexboxLayout >
 </LinearLayout>
