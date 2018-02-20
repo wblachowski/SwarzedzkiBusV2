@@ -115,14 +115,14 @@ public class TimeTableFragment extends Fragment {
         textView.setGravity(Gravity.CENTER_VERTICAL);
         textView.setText(description);
         textView.setTextSize(18);
-        textView.setPadding((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 24, getContext().getResources().getDisplayMetrics()),0,0,0);
+        textView.setPadding((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 24, getContext().getResources().getDisplayMetrics()),0,8,0);
         layout.addView(textView);
         return layout;
     }
 
     private ArrayList<Hour> loadHoursFromCursor(Cursor cursor) {
         ArrayList<Hour> hours = new ArrayList<>();
-        for (int i = 4; i < 24; i++) {
+        for (int i = 0; i < 24; i++) {
             hours.add(new Hour(i, new ArrayList<Integer>(), new ArrayList<String>()));
         }
         if (cursor.moveToFirst()) {
@@ -130,8 +130,8 @@ public class TimeTableFragment extends Fragment {
                 String hourS = cursor.getString(cursor.getColumnIndex("hour"));
                 String minuteS = cursor.getString(cursor.getColumnIndex("minute"));
                 String remark = cursor.getString(cursor.getColumnIndex("remark"));
-                hours.get(Integer.parseInt(hourS) - 4).addToMinutes(new Integer(minuteS));
-                hours.get(Integer.parseInt(hourS) - 4).addToRemarks(remark);
+                hours.get(Integer.parseInt(hourS)).addToMinutes(new Integer(minuteS));
+                hours.get(Integer.parseInt(hourS)).addToRemarks(remark);
             } while (cursor.moveToNext());
         }
         cursor.close();
