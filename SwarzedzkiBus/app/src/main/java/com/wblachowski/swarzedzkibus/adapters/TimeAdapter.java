@@ -56,8 +56,9 @@ public class TimeAdapter extends ArrayAdapter<Hour> {
 
     private LinearLayout prepareMinuteView(Context context, int minute, String remark) {
         LinearLayout parent = new LinearLayout(context);
-        parent.setLayoutParams(new LinearLayout.LayoutParams((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 46, context.getResources().getDisplayMetrics()), LinearLayout.LayoutParams.WRAP_CONTENT));
+        parent.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT));
         parent.setOrientation(LinearLayout.HORIZONTAL);
+        parent.setMinimumWidth((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 46, context.getResources().getDisplayMetrics()));
         TextView minuteText = prepareMinuteText(context, minute);
         TextView remarkText = prepareRemarkText(context, remark);
         parent.addView(minuteText);
