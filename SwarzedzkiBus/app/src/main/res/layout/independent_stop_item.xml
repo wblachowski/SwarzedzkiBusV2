@@ -7,7 +7,7 @@
     android:weightSum="1">
 
     <TextView
-        android:id="@+id/bus_nr"
+        android:id="@+id/independent_bus_nr"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:gravity="center_vertical"
@@ -33,7 +33,7 @@
         android:layout_marginBottom="5dp"
         android:orientation="vertical">
         <TextView
-            android:id="@+id/bus_stop"
+            android:id="@+id/independent_bus_stop"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:paddingLeft="10dp"
@@ -47,7 +47,7 @@
             android:layout_gravity="right"
             android:weightSum="1">
             <TextView
-                android:id="@+id/bus_to"
+                android:id="@+id/independent_bus_to"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:paddingLeft="10dp"

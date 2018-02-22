@@ -191,22 +191,36 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         }
     }
 
-    public Cursor getStopsTimes(String stopId, int type){
+    public Cursor getStopsTimes(String stopId, int type) {
         String query = "SELECT DISTINCT stop_id, type, hour,minute,remark FROM time_tables WHERE stop_id=? AND type=?";
         try {
-            return myDataBase.rawQuery(query, new String[]{stopId,new Integer(type).toString()});
+            return myDataBase.rawQuery(query, new String[]{stopId, new Integer(type).toString()});
         } catch (Exception ex) {
             System.out.println(ex.getMessage());
             return null;
         }
     }
 
-    public Cursor getRemarksByStop(String stopId){
-        String query="SELECT DISTINCT symbol,description FROM remarks WHERE stop_id=?";
-        try{
-            return myDataBase.rawQuery(query,new String[]{stopId});
-        }catch(Exception ex){
+    public Cursor getRemarksByStop(String stopId) {
+        String query = "SELECT DISTINCT symbol,description FROM remarks WHERE stop_id=?";
+        try {
+            return myDataBase.rawQuery(query, new String[]{stopId});
+        } catch (Exception ex) {
             System.out.println(ex.getMessage());
+            return null;
+        }
+    }
+
+    public Cursor getStopsByName(String name) {
+        String query = "SELECT routes.id as _id, buses_routes.bus_name, stops.name as STOP, lastStops.name as FINAL_STOP, stops.id FROM stops join routes on stops.id=routes.stop_id join buses_routes on buses_routes.route_id=routes.id\n" +
+                " join\n" +
+                " (SELECT bus_name, stops.name, stops.id, routes.id AS ROUTE_ID, max(routes.stop_order) FROM stops join routes on stops.id=routes.stop_id join buses_routes on buses_routes.route_id=routes.id group by routes.id) lastStops\n" +
+                " on routes.id=lastStops.ROUTE_ID\n" +
+                " where stop like ?";
+        try {
+            return myDataBase.rawQuery(query, new String[]{"%" + name + "%"});
+        } catch (Exception ex) {
+            System.out.print(ex.getMessage());
             return null;
         }
     }
