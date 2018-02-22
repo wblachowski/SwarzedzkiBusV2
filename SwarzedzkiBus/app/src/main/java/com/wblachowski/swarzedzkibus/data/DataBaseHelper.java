@@ -212,13 +212,17 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     }
 
     public Cursor getStopsByName(String name) {
-        String query = "SELECT routes.id as _id, buses_routes.bus_name, stops.name as STOP, lastStops.name as FINAL_STOP, stops.id FROM stops join routes on stops.id=routes.stop_id join buses_routes on buses_routes.route_id=routes.id\n" +
-                " join\n" +
-                " (SELECT bus_name, stops.name, stops.id, routes.id AS ROUTE_ID, max(routes.stop_order) FROM stops join routes on stops.id=routes.stop_id join buses_routes on buses_routes.route_id=routes.id group by routes.id) lastStops\n" +
-                " on routes.id=lastStops.ROUTE_ID\n" +
-                " where stop like ?";
+        String query = "SELECT  routes.id as _id, buses_routes.bus_name, \n" +
+                "stops.name as STOP, \n" +
+                "replace(replace(replace(replace(replace(replace(replace(replace(replace(lower(stops.name),'ą','a'),'ć','c'),'ę','e'),'ł','l'),'ń','n'),'ó','o'),'ś','s'),'ź','z'),'ż','z') as STOP_ASCII,\n" +
+                "lastStops.name as FINAL_STOP, stops.id FROM stops join routes on stops.id=routes.stop_id join buses_routes on buses_routes.route_id=routes.id\n" +
+                "join\n" +
+                "(SELECT bus_name, stops.name, stops.id, routes.id AS ROUTE_ID, max(routes.stop_order) FROM stops join routes on stops.id=routes.stop_id join buses_routes on buses_routes.route_id=routes.id group by routes.id) lastStops\n" +
+                "on routes.id=lastStops.ROUTE_ID\n" +
+                "where\n" +
+                "stop_ASCII like '%' || replace(replace(replace(replace(replace(replace(replace(replace(replace(lower(?),'ą','a'),'ć','c'),'ę','e'),'ł','l'),'ń','n'),'ó','o'),'ś','s'),'ź','z'),'ż','z') || '%'";
         try {
-            return myDataBase.rawQuery(query, new String[]{"%" + name + "%"});
+            return myDataBase.rawQuery(query, new String[]{name});
         } catch (Exception ex) {
             System.out.print(ex.getMessage());
             return null;
