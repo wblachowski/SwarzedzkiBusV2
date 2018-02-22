@@ -7,6 +7,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 
 import com.codewaves.stickyheadergrid.StickyHeaderGridLayoutManager;
 import com.wblachowski.swarzedzkibus.R;
@@ -28,11 +29,13 @@ public class AllFragment extends Fragment {
 
     private RecyclerView mRecycler;
     private StickyHeaderGridLayoutManager mLayoutManager;
+    private LinearLayout emptyInfoLayout;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_all, container, false);
+        emptyInfoLayout = rootView.findViewById(R.id.fragment_all_empty_layout);
         // Setup recycler
         mRecycler = (RecyclerView) rootView.findViewById(R.id.recycler);
         mLayoutManager = new StickyHeaderGridLayoutManager(2);
@@ -41,12 +44,16 @@ public class AllFragment extends Fragment {
         ArrayList<String> headers = new ArrayList<>();
         ArrayList<ArrayList<Bus>> buses = new ArrayList<ArrayList<Bus>>();
 
-
         parseDatabaseData(((MainActivity) getActivity()).getDataBaseHelper().getAllBusesCursor(), headers, buses);
+        setEmptyLayoutVisibility(buses.size()>0);
 
         mRecycler.setLayoutManager(mLayoutManager);
         mRecycler.setAdapter(new AllAdapter(headers, buses));
         return rootView;
+    }
+
+    private void setEmptyLayoutVisibility(boolean visibility){
+        emptyInfoLayout.setVisibility(!visibility ? View.VISIBLE : View.INVISIBLE);
     }
 
     private void parseDatabaseData(Cursor cursor, ArrayList<String> headers, ArrayList<ArrayList<Bus>> buses) {

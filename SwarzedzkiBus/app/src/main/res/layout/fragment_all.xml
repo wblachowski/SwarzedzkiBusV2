@@ -4,8 +4,33 @@
     android:layout_height="match_parent"
     tools:context="com.wblachowski.swarzedzkibus.activities.MainActivity">
 
-    <android.support.v7.widget.RecyclerView android:id="@+id/recycler"
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/recycler"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:scrollbars="vertical" />
+
+    <LinearLayout
+        android:id="@+id/fragment_all_empty_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:visibility="invisible">
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:layout_marginTop="100dp"
+            android:src="@drawable/ic_directions_bus_black_100dp"
+            android:tint="@color/colorBleak" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:text="Brak rozkładów"
+            android:textColor="@color/colorBleak"
+            android:textSize="16dp" />
+    </LinearLayout>
+
 </RelativeLayout>
