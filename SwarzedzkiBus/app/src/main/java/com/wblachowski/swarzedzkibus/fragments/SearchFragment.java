@@ -1,5 +1,6 @@
 package com.wblachowski.swarzedzkibus.fragments;
 
+import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -8,11 +9,13 @@ import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 
 import com.wblachowski.swarzedzkibus.R;
+import com.wblachowski.swarzedzkibus.activities.TimeTableActivity;
 import com.wblachowski.swarzedzkibus.adapters.IndependentStopsCursorAdapter;
 import com.wblachowski.swarzedzkibus.data.DataBaseHelper;
 
@@ -50,9 +53,10 @@ public class SearchFragment extends Fragment {
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
                 clearButton.setVisibility(charSequence.length() > 0 ? View.VISIBLE : View.INVISIBLE);
+                killSearchThread();
                 if (charSequence.length() >= 2) {
                     searchForStops(charSequence.toString());
-                }else{
+                } else {
                     clearListView();
                 }
             }
@@ -74,21 +78,47 @@ public class SearchFragment extends Fragment {
     }
 
     private void searchForStops(final String pattern) {
-        if(searchThread!=null && searchThread.isAlive()){
-            searchThread.interrupt();
-        }
         searchThread = new Thread(new Runnable() {
             @Override
             public void run() {
-                Cursor cursor = DataBaseHelper.getInstance(getActivity()).getStopsByName(pattern);
-                IndependentStopsCursorAdapter stopsAdapter = new IndependentStopsCursorAdapter(getActivity(),cursor);
-                listView.setAdapter(stopsAdapter);
+                try {
+                    final Cursor cursor = DataBaseHelper.getInstance(getActivity()).getStopsByName(pattern);
+                    final IndependentStopsCursorAdapter stopsAdapter = new IndependentStopsCursorAdapter(getActivity(), cursor);
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            listView.setAdapter(stopsAdapter);
+                            listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                                @Override
+                                public void onItemClick(AdapterView<?> a, View v, int position,
+                                                        long id) {
+
+                                    Intent intent = new Intent(v.getContext(), TimeTableActivity.class);
+                                    cursor.moveToPosition(position);
+                                    intent.putExtra("nr",cursor.getString(cursor.getColumnIndex("bus_name")));
+                                    intent.putExtra("id",cursor.getString(cursor.getColumnIndex("id")));
+                                    intent.putExtra("stopName",cursor.getString(cursor.getColumnIndex("STOP")));
+                                    intent.putExtra("direction",cursor.getString(cursor.getColumnIndex("FINAL_STOP")));
+                                    startActivity(intent);
+                                }
+                            });
+                        }
+                    });
+                } catch (Exception e) {
+                    return;
+                }
             }
         });
-        searchThread.run();
+        searchThread.start();
     }
 
-    private void clearListView(){
+    private void clearListView() {
         listView.setAdapter(null);
+    }
+
+    private void killSearchThread(){
+        if (searchThread != null && searchThread.isAlive()) {
+            searchThread.interrupt();
+        }
     }
 }
