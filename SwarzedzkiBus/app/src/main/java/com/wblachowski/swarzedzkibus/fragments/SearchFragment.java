@@ -25,6 +25,7 @@ public class SearchFragment extends Fragment {
     EditText editText;
     Button clearButton;
     ListView listView;
+    Thread searchThread;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -72,10 +73,19 @@ public class SearchFragment extends Fragment {
         });
     }
 
-    private void searchForStops(String pattern) {
-        Cursor cursor = DataBaseHelper.getInstance(getActivity()).getStopsByName(pattern);
-        IndependentStopsCursorAdapter stopsAdapter = new IndependentStopsCursorAdapter(getActivity(),cursor);
-        listView.setAdapter(stopsAdapter);
+    private void searchForStops(final String pattern) {
+        if(searchThread!=null && searchThread.isAlive()){
+            searchThread.interrupt();
+        }
+        searchThread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                Cursor cursor = DataBaseHelper.getInstance(getActivity()).getStopsByName(pattern);
+                IndependentStopsCursorAdapter stopsAdapter = new IndependentStopsCursorAdapter(getActivity(),cursor);
+                listView.setAdapter(stopsAdapter);
+            }
+        });
+        searchThread.run();
     }
 
     private void clearListView(){
