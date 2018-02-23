@@ -27,8 +27,7 @@
         </activity>
         <activity
             android:name=".activities.TimeTableActivity"
-            android:label="@string/title_activity_time_table"
             android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
-
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 </manifest>
