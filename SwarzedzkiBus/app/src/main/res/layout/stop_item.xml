@@ -31,6 +31,6 @@
         android:layout_marginRight="10dp"
         android:background="@null"
         android:focusable="false"
-        android:tint="#D6D6D6"
+        android:tint="@color/colorNotFavourite"
         android:src="@drawable/ic_star_border_black_24dp" />
 </LinearLayout>

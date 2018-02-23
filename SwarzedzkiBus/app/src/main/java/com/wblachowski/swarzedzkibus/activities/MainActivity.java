@@ -12,7 +12,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.wblachowski.swarzedzkibus.R;
-import com.wblachowski.swarzedzkibus.data.DataBaseHelper;
+import com.wblachowski.swarzedzkibus.data.MainDataBaseHelper;
+import com.wblachowski.swarzedzkibus.data.SettingsDataBaseHelper;
 import com.wblachowski.swarzedzkibus.fragments.AllFragment;
 import com.wblachowski.swarzedzkibus.fragments.FavouritesFragment;
 import com.wblachowski.swarzedzkibus.fragments.SearchFragment;
@@ -35,7 +36,7 @@ public class MainActivity extends AppCompatActivity {
      * The {@link ViewPager} that will host the section contents.
      */
     private ViewPager mViewPager;
-    private DataBaseHelper myDbHelper;
+    private MainDataBaseHelper myDbHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,6 +44,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         createDataBase();
+        createSettingsDataBase();
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -85,12 +87,12 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    public DataBaseHelper getDataBaseHelper(){
+    public MainDataBaseHelper getDataBaseHelper() {
         return myDbHelper;
     }
 
-    private void createDataBase(){
-        myDbHelper = DataBaseHelper.getInstance(this);
+    private void createDataBase() {
+        myDbHelper = MainDataBaseHelper.getInstance(this);
 
         try {
 
@@ -106,10 +108,18 @@ public class MainActivity extends AppCompatActivity {
 
             myDbHelper.openDataBase();
 
-        }catch(Exception sqle){
+        } catch (Exception sqle) {
 
             System.out.println(sqle.getMessage());
 
+        }
+    }
+
+    private void createSettingsDataBase() {
+        try {
+            SettingsDataBaseHelper.getInstance(this).createDataBase();
+        } catch (Exception ex) {
+            System.out.println(ex.getMessage());
         }
     }
 
@@ -125,7 +135,7 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public Fragment getItem(int position) {
-            switch(position){
+            switch (position) {
                 case 0:
                     FavouritesFragment favouritesFragment = new FavouritesFragment();
                     return favouritesFragment;

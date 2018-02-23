@@ -16,9 +16,9 @@ import java.io.OutputStream;
  * Created by wblachowski on 2/18/2018.
  */
 
-public class DataBaseHelper extends SQLiteOpenHelper {
+public class MainDataBaseHelper extends SQLiteOpenHelper {
 
-    private static DataBaseHelper instance;
+    private static MainDataBaseHelper instance;
     //The Android's default system path of your application database.
     private static String DB_PATH = "/data/data/com.wblachowski.swarzedzkibus/databases/";
 
@@ -35,14 +35,14 @@ public class DataBaseHelper extends SQLiteOpenHelper {
      * @param context
      */
 
-    public static synchronized DataBaseHelper getInstance(Context context) {
+    public static synchronized MainDataBaseHelper getInstance(Context context) {
         if (instance == null) {
-            instance = new DataBaseHelper(context.getApplicationContext());
+            instance = new MainDataBaseHelper(context.getApplicationContext());
         }
         return instance;
     }
 
-    private DataBaseHelper(Context context) {
+    private MainDataBaseHelper(Context context) {
 
         super(context, DB_NAME, null, 1);
         this.myContext = context;
@@ -181,7 +181,9 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     }
 
     public Cursor getStopsCursor(String routeId) {
-        String query = "SELECT routes.rowid _id, bus_name, routes.id, stop_order, stop_id,stops.name from buses_routes join routes on buses_routes.route_id=routes.id join stops on stops.id=stop_id \n" +
+        String query = "SELECT routes.rowid _id, bus_name, routes.id, stop_order, stop_id,stops.name, " +
+                " stop_id in(" + SettingsDataBaseHelper.getInstance(myContext).getFavouritesString() + ") as favourite "+
+                " from buses_routes join routes on buses_routes.route_id=routes.id join stops on stops.id=stop_id \n" +
                 " WHERE routes.id = ? order by routes.id, stop_order";
         try {
             return myDataBase.rawQuery(query, new String[]{routeId});

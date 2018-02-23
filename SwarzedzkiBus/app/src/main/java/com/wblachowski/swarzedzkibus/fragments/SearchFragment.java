@@ -17,7 +17,7 @@ import android.widget.ListView;
 import com.wblachowski.swarzedzkibus.R;
 import com.wblachowski.swarzedzkibus.activities.TimeTableActivity;
 import com.wblachowski.swarzedzkibus.adapters.IndependentStopsCursorAdapter;
-import com.wblachowski.swarzedzkibus.data.DataBaseHelper;
+import com.wblachowski.swarzedzkibus.data.MainDataBaseHelper;
 
 /**
  * Created by wblachowski on 2/18/2018.
@@ -82,7 +82,7 @@ public class SearchFragment extends Fragment {
             @Override
             public void run() {
                 try {
-                    final Cursor cursor = DataBaseHelper.getInstance(getActivity()).getStopsByName(pattern);
+                    final Cursor cursor = MainDataBaseHelper.getInstance(getActivity()).getStopsByName(pattern);
                     final IndependentStopsCursorAdapter stopsAdapter = new IndependentStopsCursorAdapter(getActivity(), cursor);
                     getActivity().runOnUiThread(new Runnable() {
                         @Override

@@ -16,7 +16,7 @@ import android.widget.TextView;
 import com.google.android.flexbox.FlexboxLayout;
 import com.wblachowski.swarzedzkibus.R;
 import com.wblachowski.swarzedzkibus.adapters.TimeAdapter;
-import com.wblachowski.swarzedzkibus.data.DataBaseHelper;
+import com.wblachowski.swarzedzkibus.data.MainDataBaseHelper;
 import com.wblachowski.swarzedzkibus.data.Hour;
 
 import java.util.ArrayList;
@@ -51,7 +51,7 @@ public class TimeTableFragment extends Fragment {
     }
 
     public void loadTimes() {
-        Cursor cursor = DataBaseHelper.getInstance(getContext()).getStopsTimes(stopId, type);
+        Cursor cursor = MainDataBaseHelper.getInstance(getContext()).getStopsTimes(stopId, type);
         ArrayList<Hour> hours = loadHoursFromCursor(cursor);
         showOrHideHours(hours);
         TimeAdapter adapter = new TimeAdapter(getActivity(), R.layout.time_item, hours);
@@ -81,7 +81,7 @@ public class TimeTableFragment extends Fragment {
     }
 
     private void addRemarksFooter(ListView listView) {
-        Cursor cursor = DataBaseHelper.getInstance(getActivity()).getRemarksByStop(stopId);
+        Cursor cursor = MainDataBaseHelper.getInstance(getActivity()).getRemarksByStop(stopId);
         View view = ((LayoutInflater) this.getActivity()
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(
                 R.layout.footer_remarks, null, false);
