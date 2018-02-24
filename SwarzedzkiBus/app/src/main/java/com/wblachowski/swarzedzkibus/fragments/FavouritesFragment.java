@@ -39,35 +39,49 @@ public class FavouritesFragment extends Fragment {
         mLayoutManager = new StickyHeaderGridLayoutManager(1);
         mLayoutManager.setHeaderBottomOverlapMargin(0);
 
-        stops = parseCursorToStops(MainDataBaseHelper.getInstance(getActivity()).getFavouriteStops());
-        setEmptyLayoutVisibility();
-
-        mRecycler.setLayoutManager(mLayoutManager);
-        mRecycler.setAdapter(new FavouritesAdapter(stops,this));
+        refreshStopsList();
 
         return rootView;
     }
 
-    public void notifyStopsChanged(){
+    public void notifyStopsChanged() {
         setEmptyLayoutVisibility();
     }
 
-    private void setEmptyLayoutVisibility(){
-        noFavouritesLayout.setVisibility((stops!=null && stops.size()>0)? View.INVISIBLE : View.VISIBLE);
+    public void refreshStopsList() {
+        final FavouritesFragment fragment = this;
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                stops = parseCursorToStops(MainDataBaseHelper.getInstance(getActivity()).getFavouriteStops());
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        setEmptyLayoutVisibility();
+                        mRecycler.setLayoutManager(mLayoutManager);
+                        mRecycler.setAdapter(new FavouritesAdapter(stops, fragment));
+                    }
+                });
+            }
+        }).start();
     }
 
-    private ArrayList<Stop> parseCursorToStops(Cursor cursor){
+    private void setEmptyLayoutVisibility() {
+        noFavouritesLayout.setVisibility((stops != null && stops.size() > 0) ? View.INVISIBLE : View.VISIBLE);
+    }
+
+    private ArrayList<Stop> parseCursorToStops(Cursor cursor) {
         ArrayList<Stop> stops = new ArrayList<>();
-        if(cursor!=null && cursor.moveToFirst()){
-            do{
-                String stopId= cursor.getString(cursor.getColumnIndex("id"));
+        if (cursor != null && cursor.moveToFirst()) {
+            do {
+                String stopId = cursor.getString(cursor.getColumnIndex("id"));
                 String busNr = cursor.getString(cursor.getColumnIndex("bus_name"));
                 String stopName = cursor.getString(cursor.getColumnIndex("STOP"));
                 String direction = cursor.getString(cursor.getColumnIndex("FINAL_STOP"));
 
-                Stop stop = new Stop(stopId,busNr,stopName,direction);
+                Stop stop = new Stop(stopId, busNr, stopName, direction);
                 stops.add(stop);
-            }while(cursor.moveToNext());
+            } while (cursor.moveToNext());
         }
         return stops;
     }

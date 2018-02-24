@@ -31,7 +31,9 @@ public class MainActivity extends AppCompatActivity {
      * {@link android.support.v4.app.FragmentStatePagerAdapter}.
      */
     private SectionsPagerAdapter mSectionsPagerAdapter;
-
+    FavouritesFragment favouritesFragment;
+    AllFragment allFragment;
+    SearchFragment searchFragment;
     /**
      * The {@link ViewPager} that will host the section contents.
      */
@@ -58,7 +60,24 @@ public class MainActivity extends AppCompatActivity {
 
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(mViewPager);
+        tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                if(tab.getPosition()==0){
+                    favouritesFragment.refreshStopsList();
+                }
+            }
 
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+
+            }
+        });
         tabLayout.getTabAt(0).setIcon(R.drawable.tab_favourites);
         tabLayout.getTabAt(1).setIcon(R.drawable.tab_all);
         tabLayout.getTabAt(2).setIcon(R.drawable.tab_search);
@@ -137,13 +156,13 @@ public class MainActivity extends AppCompatActivity {
         public Fragment getItem(int position) {
             switch (position) {
                 case 0:
-                    FavouritesFragment favouritesFragment = new FavouritesFragment();
+                    favouritesFragment = new FavouritesFragment();
                     return favouritesFragment;
                 case 1:
-                    AllFragment allFragment = new AllFragment();
+                    allFragment = new AllFragment();
                     return allFragment;
                 case 2:
-                    SearchFragment searchFragment = new SearchFragment();
+                    searchFragment = new SearchFragment();
                     return searchFragment;
                 default:
                     return null;
