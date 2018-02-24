@@ -5,8 +5,6 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
-import java.io.File;
-
 /**
  * Created by wblachowski on 2/23/2018.
  */
@@ -37,11 +35,8 @@ public class SettingsDataBaseHelper extends SQLiteOpenHelper {
     }
 
     public void createDataBase() {
-        boolean dbExistring = new File(DB_PATH + DB_NAME).exists();
         myDataBase = SQLiteDatabase.openDatabase(DB_PATH + DB_NAME, null, SQLiteDatabase.CREATE_IF_NECESSARY);
-        if (!dbExistring) {
-            initializeDataBase();
-        }
+        initializeDataBase();
     }
 
     private void initializeDataBase() {
