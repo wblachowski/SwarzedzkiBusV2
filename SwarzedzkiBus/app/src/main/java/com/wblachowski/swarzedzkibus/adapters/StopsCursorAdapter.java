@@ -31,6 +31,7 @@ public class StopsCursorAdapter extends CursorAdapter {
     public void bindView(View view, final Context context, Cursor cursor) {
         final String stopName = cursor.getString(cursor.getColumnIndex("name"));
         final String stopId = cursor.getString(cursor.getColumnIndex("stop_id"));
+        final String direction = cursor.getString(cursor.getColumnIndex("LAST_STOP"));
         final boolean isFavourite = cursor.getString(cursor.getColumnIndex("favourite")).equals("1");
         TextView stopText = view.findViewById(R.id.stop_name);
         stopText.setText(cursor.getString(cursor.getColumnIndex("name")));
@@ -53,17 +54,16 @@ public class StopsCursorAdapter extends CursorAdapter {
             favImage.setColorFilter(context.getResources().getColor(R.color.colorNotFavourite));
             favImage.setTag(R.id.favId,"0");
         }
-
         favImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if(((String)favImage.getTag(R.id.favId)).equals("0")) {
                     //not favourite
-                    SettingsDataBaseHelper.getInstance(context).insertIntoFavourites(stopId);
+                    SettingsDataBaseHelper.getInstance(context).insertIntoFavourites(stopId,direction);
                     favImage.setColorFilter(context.getResources().getColor(R.color.colorPrimary));
                     favImage.setTag(R.id.favId,"1");
                 }else{
-                    SettingsDataBaseHelper.getInstance(context).deleteFromFavourites(stopId);
+                    SettingsDataBaseHelper.getInstance(context).deleteFromFavourites(stopId,direction);
                     favImage.setColorFilter(context.getResources().getColor(R.color.colorNotFavourite));
                     favImage.setTag(R.id.favId,"0");
                 }

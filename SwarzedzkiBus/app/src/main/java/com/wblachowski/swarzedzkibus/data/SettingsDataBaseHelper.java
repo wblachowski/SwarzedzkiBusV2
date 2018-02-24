@@ -37,6 +37,7 @@ public class SettingsDataBaseHelper extends SQLiteOpenHelper {
     }
 
     public void createDataBase() {
+        new File(DB_PATH+DB_NAME).delete();
         boolean dbExistring = new File(DB_PATH + DB_NAME).exists();
         myDataBase = SQLiteDatabase.openDatabase(DB_PATH + DB_NAME, null, SQLiteDatabase.CREATE_IF_NECESSARY);
         if (!dbExistring) {
@@ -49,29 +50,29 @@ public class SettingsDataBaseHelper extends SQLiteOpenHelper {
     }
 
     private void initalizeFavourites() {
-        String query = "CREATE TABLE IF NOT EXISTS favourites(stop_id TEXT PRIMARY KEY)";
+        String query = "CREATE TABLE IF NOT EXISTS favourites(stop_id TEXT, direction TEXT, PRIMARY KEY(stop_id,direction))";
         myDataBase.execSQL(query);
     }
 
-    public void insertIntoFavourites(String stopId) {
+    public void insertIntoFavourites(String stopId, String direction) {
         try{
-        String query = "INSERT INTO favourites(stop_id) VALUES(?)";
-        myDataBase.execSQL(query,new String[]{stopId});}
+        String query = "INSERT INTO favourites(stop_id, direction) VALUES(?,?)";
+        myDataBase.execSQL(query,new String[]{stopId,direction});}
         catch (Exception ex){
             //this stop is already in favourites
             return;
         }
     }
 
-    public void deleteFromFavourites(String stopId){
-        String query="DELETE FROM favourites WHERE stop_id=?";
-        myDataBase.execSQL(query,new String[]{stopId});
+    public void deleteFromFavourites(String stopId, String direction){
+        String query="DELETE FROM favourites WHERE stop_id = ? AND diretion = ?";
+        myDataBase.execSQL(query,new String[]{stopId,direction});
     }
 
     public String getFavouritesString() {
 
         try {
-            String query = "SELECT GROUP_CONCAT('''' || stop_id || '''') as list from favourites";
+            String query = "SELECT GROUP_CONCAT('''' || stop_id || ' ' || direction || '''') as list from favourites";
             Cursor cursor = myDataBase.rawQuery(query, null);
             cursor.moveToFirst();
             String list = cursor.getString(cursor.getColumnIndex("list"));

@@ -182,11 +182,12 @@ public class MainDataBaseHelper extends SQLiteOpenHelper {
 
     public Cursor getStopsCursor(String routeId) {
         String query = "SELECT routes.rowid _id, bus_name, routes.id, stop_order, stop_id,stops.name, " +
-                " stop_id in(" + SettingsDataBaseHelper.getInstance(myContext).getFavouritesString() + ") as favourite "+
+                " (stop_id || ' ' || lastStop.name) in(" + SettingsDataBaseHelper.getInstance(myContext).getFavouritesString() + ") as favourite, lastStop.name as LAST_STOP  " +
                 " from buses_routes join routes on buses_routes.route_id=routes.id join stops on stops.id=stop_id \n" +
+                " join (SELECT max(stop_order), stops.name FROM routes JOIN stops ON routes.stop_id=stops.id WHERE routes.id = ?) lastStop\n" +
                 " WHERE routes.id = ? order by routes.id, stop_order";
         try {
-            return myDataBase.rawQuery(query, new String[]{routeId});
+            return myDataBase.rawQuery(query, new String[]{routeId,routeId});
         } catch (Exception ex) {
             System.out.println(ex.getMessage());
             return null;
@@ -231,17 +232,17 @@ public class MainDataBaseHelper extends SQLiteOpenHelper {
         }
     }
 
-    public Cursor getFavouriteStops(){
+    public Cursor getFavouriteStops() {
         String query = "SELECT  routes.id as _id, buses_routes.bus_name, \n" +
                 "stops.name as STOP, lastStops.name as FINAL_STOP, stops.id FROM stops join routes on stops.id=routes.stop_id join buses_routes on buses_routes.route_id=routes.id\n" +
                 "join\n" +
                 "(SELECT bus_name, stops.name, stops.id, routes.id AS ROUTE_ID, max(routes.stop_order) FROM stops join routes on stops.id=routes.stop_id join buses_routes on buses_routes.route_id=routes.id group by routes.id) lastStops\n" +
                 "on routes.id=lastStops.ROUTE_ID\n" +
-                "WHERE stops.id in ("+
+                "WHERE (stops.id || ' ' || FINAL_STOP) in (" +
                 SettingsDataBaseHelper.getInstance(myContext).getFavouritesString() + ")";
-        try{
-            return myDataBase.rawQuery(query,null);
-        }catch (Exception ex){
+        try {
+            return myDataBase.rawQuery(query, null);
+        } catch (Exception ex) {
             System.out.println(ex.getMessage());
             return null;
         }
