@@ -1,7 +1,9 @@
 package com.wblachowski.swarzedzkibus.adapters;
 
 import android.content.Intent;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
@@ -73,6 +75,22 @@ public class FavouritesAdapter extends StickyHeaderGridAdapter {
                 intent.putExtra("direction",stop.getDirection());
 
                 v.getContext().startActivity(intent);
+            }
+        });
+
+        holder.itemView.setOnCreateContextMenuListener(new View.OnCreateContextMenuListener() {
+            @Override
+            public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+                menu.add(v.getResources().getString(R.string.favourite_remove)).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+                    @Override
+                    public boolean onMenuItemClick(MenuItem item) {
+
+                        /*
+                        stops.remove(position);
+                        notifySectionItemRemoved(0,position);*/
+                        return true;
+                    }
+                });
             }
         });
     }

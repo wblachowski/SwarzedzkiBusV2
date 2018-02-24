@@ -5,4 +5,5 @@
     <string name="action_settings">Ustawienia</string>
     <string name="action_about">Informacje</string>
     <string name="action_favourite">Dodaj do ulubionych</string>
+    <string name="favourite_remove">Usuń z ulubionych</string>
 </resources>
