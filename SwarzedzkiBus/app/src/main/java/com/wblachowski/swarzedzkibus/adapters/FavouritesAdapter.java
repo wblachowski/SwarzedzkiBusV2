@@ -66,7 +66,7 @@ public class FavouritesAdapter extends StickyHeaderGridAdapter {
             @Override
             public void onClick(View v) {
                 final int offset = getItemSectionOffset(section, holder.getAdapterPosition());
-                Stop stop=stops.get(offset);
+                final Stop stop=stops.get(offset);
 
                 Intent intent = new Intent(v.getContext(), TimeTableActivity.class);
                 intent.putExtra("nr",stop.getBusNr());
@@ -84,10 +84,10 @@ public class FavouritesAdapter extends StickyHeaderGridAdapter {
                 menu.add(v.getResources().getString(R.string.favourite_remove)).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
                     @Override
                     public boolean onMenuItemClick(MenuItem item) {
+                        final int offset = getItemSectionOffset(section, holder.getAdapterPosition());
 
-                        /*
-                        stops.remove(position);
-                        notifySectionItemRemoved(0,position);*/
+                        stops.remove(offset);
+                        notifySectionItemRemoved(0,offset);
                         return true;
                     }
                 });
