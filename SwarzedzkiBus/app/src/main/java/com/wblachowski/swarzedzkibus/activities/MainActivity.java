@@ -6,10 +6,12 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 
 import com.wblachowski.swarzedzkibus.R;
 import com.wblachowski.swarzedzkibus.data.MainDataBaseHelper;
@@ -50,6 +52,21 @@ public class MainActivity extends AppCompatActivity {
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                switch (item.getItemId()) {
+                    case R.id.action_refresh:
+                        break;
+                    case R.id.action_settings:
+                        break;
+                    case R.id.action_about:
+                        showAboutDialog();
+                        break;
+                }
+                return true;
+            }
+        });
         // Create the adapter that will return a fragment for each of the three
         // primary sections of the activity.
         mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
@@ -63,7 +80,7 @@ public class MainActivity extends AppCompatActivity {
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
-                if(tab.getPosition()==0){
+                if (tab.getPosition() == 0) {
                     favouritesFragment.refreshStopsList();
                 }
             }
@@ -140,6 +157,21 @@ public class MainActivity extends AppCompatActivity {
         } catch (Exception ex) {
             System.out.println(ex.getMessage());
         }
+    }
+
+    private void showAboutDialog(){
+        View view = getLayoutInflater().inflate( R.layout.dialog_information, null );
+        AlertDialog.Builder dialog = new AlertDialog.Builder( this );
+        dialog.setTitle(R.string.about_title).setNegativeButton(R.string.about_close,null);
+        /* dialog.setNeutralButton(R.string.close_about,
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.cancel();
+                    }
+                });*/
+
+        dialog.setView(view);
+        dialog.show();
     }
 
     /**

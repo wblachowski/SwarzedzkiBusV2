@@ -1,9 +1,12 @@
 <resources>
     <string name="app_name">Swarzędzki Bus</string>
     <string name="version">2.0</string>
+    <string name="database_title">Ostatnia aktualizacja rozkładów:</string>
     <string name="action_refresh">Pobierz rozkład</string>
     <string name="action_settings">Ustawienia</string>
     <string name="action_about">Informacje</string>
+    <string name="about_title">Informacje o aplikacji</string>
+    <string name="about_close">ZAMKNIJ</string>
     <string name="action_favourite">Dodaj do ulubionych</string>
     <string name="favourite_remove">Usuń z ulubionych</string>
 </resources>

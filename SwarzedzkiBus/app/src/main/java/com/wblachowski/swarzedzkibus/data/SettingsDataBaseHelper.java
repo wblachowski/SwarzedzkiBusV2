@@ -49,20 +49,20 @@ public class SettingsDataBaseHelper extends SQLiteOpenHelper {
     }
 
     public void insertIntoFavourites(String stopId, String direction) {
-        try{
-        String query = "INSERT INTO favourites(stop_id, direction) VALUES(?,?)";
-        myDataBase.execSQL(query,new String[]{stopId,direction});}
-        catch (Exception ex){
+        try {
+            String query = "INSERT INTO favourites(stop_id, direction) VALUES(?,?)";
+            myDataBase.execSQL(query, new String[]{stopId, direction});
+        } catch (Exception ex) {
             //this stop is already in favourites
             return;
         }
     }
 
-    public void deleteFromFavourites(String stopId, String direction){
+    public void deleteFromFavourites(String stopId, String direction) {
         try {
             String query = "DELETE FROM favourites WHERE stop_id = ? AND direction = ?";
             myDataBase.execSQL(query, new String[]{stopId, direction});
-        }catch(Exception ex){
+        } catch (Exception ex) {
             //log info
             return;
         }
