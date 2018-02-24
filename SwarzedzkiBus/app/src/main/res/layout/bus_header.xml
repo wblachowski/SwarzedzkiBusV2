@@ -3,11 +3,12 @@
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:padding="3dp"
-    android:background="#FFEBEE">
+    android:background="#EBEBEB">
     <TextView android:id="@+id/header_label"
         android:textSize="16dp"
         android:layout_marginLeft="6dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Linie do Poznania"/>
+        android:text="Linie do Poznania"
+        android:textColor="@android:color/black"/>
 </LinearLayout>
