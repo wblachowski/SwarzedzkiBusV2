@@ -231,4 +231,20 @@ public class MainDataBaseHelper extends SQLiteOpenHelper {
         }
     }
 
+    public Cursor getFavouriteStops(){
+        String query = "SELECT  routes.id as _id, buses_routes.bus_name, \n" +
+                "stops.name as STOP, lastStops.name as FINAL_STOP, stops.id FROM stops join routes on stops.id=routes.stop_id join buses_routes on buses_routes.route_id=routes.id\n" +
+                "join\n" +
+                "(SELECT bus_name, stops.name, stops.id, routes.id AS ROUTE_ID, max(routes.stop_order) FROM stops join routes on stops.id=routes.stop_id join buses_routes on buses_routes.route_id=routes.id group by routes.id) lastStops\n" +
+                "on routes.id=lastStops.ROUTE_ID\n" +
+                "WHERE stops.id in ("+
+                SettingsDataBaseHelper.getInstance(myContext).getFavouritesString() + ")";
+        try{
+            return myDataBase.rawQuery(query,null);
+        }catch (Exception ex){
+            System.out.println(ex.getMessage());
+            return null;
+        }
+    }
+
 }

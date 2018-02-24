@@ -23,10 +23,6 @@ import java.util.ArrayList;
 
 public class AllFragment extends Fragment {
 
-    private static final int SPAN_SIZE = 3;
-    private static final int SECTIONS = 10;
-    private static final int SECTION_ITEMS = 5;
-
     private RecyclerView mRecycler;
     private StickyHeaderGridLayoutManager mLayoutManager;
     private LinearLayout emptyInfoLayout;
@@ -37,7 +33,7 @@ public class AllFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_all, container, false);
         emptyInfoLayout = rootView.findViewById(R.id.fragment_all_empty_layout);
         // Setup recycler
-        mRecycler = (RecyclerView) rootView.findViewById(R.id.recycler);
+        mRecycler = rootView.findViewById(R.id.recycler);
         mLayoutManager = new StickyHeaderGridLayoutManager(2);
         mLayoutManager.setHeaderBottomOverlapMargin(0);
 

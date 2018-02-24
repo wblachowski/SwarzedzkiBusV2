@@ -4,6 +4,12 @@
     android:layout_height="match_parent"
     tools:context="com.wblachowski.swarzedzkibus.activities.MainActivity">
 
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/recycler_favourites"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scrollbars="vertical" />
+
     <LinearLayout
         android:id="@+id/fragment_favourites_empty_layout"
         android:layout_width="match_parent"

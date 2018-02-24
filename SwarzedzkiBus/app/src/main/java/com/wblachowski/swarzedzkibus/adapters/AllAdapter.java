@@ -82,7 +82,7 @@ public class AllAdapter  extends StickyHeaderGridAdapter {
 
         MyHeaderViewHolder(View itemView) {
             super(itemView);
-            labelView = (TextView) itemView.findViewById(R.id.header_label);
+            labelView = itemView.findViewById(R.id.header_label);
         }
     }
 
