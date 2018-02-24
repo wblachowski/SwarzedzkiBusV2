@@ -37,7 +37,6 @@ public class SettingsDataBaseHelper extends SQLiteOpenHelper {
     }
 
     public void createDataBase() {
-        new File(DB_PATH+DB_NAME).delete();
         boolean dbExistring = new File(DB_PATH + DB_NAME).exists();
         myDataBase = SQLiteDatabase.openDatabase(DB_PATH + DB_NAME, null, SQLiteDatabase.CREATE_IF_NECESSARY);
         if (!dbExistring) {
@@ -65,8 +64,13 @@ public class SettingsDataBaseHelper extends SQLiteOpenHelper {
     }
 
     public void deleteFromFavourites(String stopId, String direction){
-        String query="DELETE FROM favourites WHERE stop_id = ? AND diretion = ?";
-        myDataBase.execSQL(query,new String[]{stopId,direction});
+        try {
+            String query = "DELETE FROM favourites WHERE stop_id = ? AND direction = ?";
+            myDataBase.execSQL(query, new String[]{stopId, direction});
+        }catch(Exception ex){
+            //log info
+            return;
+        }
     }
 
     public String getFavouritesString() {

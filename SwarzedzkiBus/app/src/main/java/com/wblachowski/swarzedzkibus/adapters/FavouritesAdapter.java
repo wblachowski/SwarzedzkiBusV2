@@ -11,6 +11,7 @@ import android.widget.TextView;
 import com.codewaves.stickyheadergrid.StickyHeaderGridAdapter;
 import com.wblachowski.swarzedzkibus.R;
 import com.wblachowski.swarzedzkibus.activities.TimeTableActivity;
+import com.wblachowski.swarzedzkibus.data.SettingsDataBaseHelper;
 import com.wblachowski.swarzedzkibus.data.Stop;
 import com.wblachowski.swarzedzkibus.fragments.FavouritesFragment;
 
@@ -83,15 +84,22 @@ public class FavouritesAdapter extends StickyHeaderGridAdapter {
 
         holder.itemView.setOnCreateContextMenuListener(new View.OnCreateContextMenuListener() {
             @Override
-            public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+            public void onCreateContextMenu(ContextMenu menu, final View v, ContextMenu.ContextMenuInfo menuInfo) {
                 menu.add(v.getResources().getString(R.string.favourite_remove)).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
                     @Override
                     public boolean onMenuItemClick(MenuItem item) {
                         final int offset = getItemSectionOffset(section, holder.getAdapterPosition());
-
+                        final String id =stops.get(offset).getId();
+                        final String direction = stops.get(offset).getDirection();
                         stops.remove(offset);
                         notifySectionItemRemoved(0,offset);
                         fragment.notifyStopsChanged();
+                        new Thread(new Runnable() {
+                            @Override
+                            public void run() {
+                                    SettingsDataBaseHelper.getInstance(v.getContext()).deleteFromFavourites(id, direction);
+                                }
+                        }).start();
                         return true;
                     }
                 });
