@@ -12,6 +12,7 @@ import com.codewaves.stickyheadergrid.StickyHeaderGridAdapter;
 import com.wblachowski.swarzedzkibus.R;
 import com.wblachowski.swarzedzkibus.activities.TimeTableActivity;
 import com.wblachowski.swarzedzkibus.data.Stop;
+import com.wblachowski.swarzedzkibus.fragments.FavouritesFragment;
 
 import java.util.ArrayList;
 
@@ -22,9 +23,11 @@ import java.util.ArrayList;
 public class FavouritesAdapter extends StickyHeaderGridAdapter {
 
     private ArrayList<Stop> stops;
+    private FavouritesFragment fragment;
 
-    public FavouritesAdapter(ArrayList<Stop> stops){
+    public FavouritesAdapter(ArrayList<Stop> stops, FavouritesFragment fragment){
         this.stops=stops;
+        this.fragment=fragment;
     }
 
     @Override
@@ -88,6 +91,7 @@ public class FavouritesAdapter extends StickyHeaderGridAdapter {
 
                         stops.remove(offset);
                         notifySectionItemRemoved(0,offset);
+                        fragment.notifyStopsChanged();
                         return true;
                     }
                 });
@@ -106,7 +110,6 @@ public class FavouritesAdapter extends StickyHeaderGridAdapter {
             nrView = itemView.findViewById(R.id.independent_bus_nr);
             stopView=itemView.findViewById(R.id.independent_bus_stop);
             directionView=itemView.findViewById(R.id.independent_bus_to);
-
         }
     }
 

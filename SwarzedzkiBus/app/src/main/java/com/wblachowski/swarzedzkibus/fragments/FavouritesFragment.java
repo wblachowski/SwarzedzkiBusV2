@@ -43,9 +43,13 @@ public class FavouritesFragment extends Fragment {
         setEmptyLayoutVisibility();
 
         mRecycler.setLayoutManager(mLayoutManager);
-        mRecycler.setAdapter(new FavouritesAdapter(stops));
+        mRecycler.setAdapter(new FavouritesAdapter(stops,this));
 
         return rootView;
+    }
+
+    public void notifyStopsChanged(){
+        setEmptyLayoutVisibility();
     }
 
     private void setEmptyLayoutVisibility(){
