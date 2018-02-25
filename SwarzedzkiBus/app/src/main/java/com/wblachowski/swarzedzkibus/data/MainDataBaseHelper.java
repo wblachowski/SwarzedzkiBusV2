@@ -76,6 +76,10 @@ public class MainDataBaseHelper extends SQLiteOpenHelper {
 
     }
 
+    public String getDbPath(){
+        return DB_PATH+DB_NAME;
+    }
+
     /**
      * Check if the database already exist to avoid re-copying the file each time you open the application.
      *

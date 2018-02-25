@@ -5,6 +5,10 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import java.io.File;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 /**
  * Created by wblachowski on 2/23/2018.
  */
@@ -41,11 +45,37 @@ public class SettingsDataBaseHelper extends SQLiteOpenHelper {
 
     private void initializeDataBase() {
         initalizeFavourites();
+        initializeAboutInfo();
     }
 
     private void initalizeFavourites() {
         String query = "CREATE TABLE IF NOT EXISTS favourites(stop_id TEXT, direction TEXT, PRIMARY KEY(stop_id,direction))";
         myDataBase.execSQL(query);
+    }
+
+    private void initializeAboutInfo() {
+        String query = "CREATE TABLE IF NOT EXISTS about(key TEXT PRIMARY KEY, value TEXT)";
+        myDataBase.execSQL(query);
+        insertDBcreateDate();
+    }
+
+    private void insertDBcreateDate() {
+        String query = "INSERT INTO about(key,value) VALUES('database_date',?)";
+        String date = getDBfileDate();
+        myDataBase.execSQL(query, new String[]{date});
+    }
+
+    private String getDBfileDate() {
+        String path = MainDataBaseHelper.getInstance(myContext).getDbPath();
+        File file = new File(path);
+        if (!file.exists()) {
+            return null;
+        }
+        Long lastModified = file.lastModified();
+        SimpleDateFormat dateFormat=new SimpleDateFormat("dd/MM/yyyy");
+        Date date=new Date();
+        date.setTime(lastModified);
+        return dateFormat.format(date);
     }
 
     public void insertIntoFavourites(String stopId, String direction) {

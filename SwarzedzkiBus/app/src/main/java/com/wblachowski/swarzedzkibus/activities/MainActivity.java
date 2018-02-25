@@ -1,5 +1,6 @@
 package com.wblachowski.swarzedzkibus.activities;
 
+import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
@@ -57,6 +58,7 @@ public class MainActivity extends AppCompatActivity {
             public boolean onMenuItemClick(MenuItem item) {
                 switch (item.getItemId()) {
                     case R.id.action_refresh:
+                        updateDataBase();
                         break;
                     case R.id.action_settings:
                         break;
@@ -163,17 +165,29 @@ public class MainActivity extends AppCompatActivity {
         View view = getLayoutInflater().inflate( R.layout.dialog_information, null );
         AlertDialog.Builder dialog = new AlertDialog.Builder( this );
         dialog.setTitle(R.string.about_title).setNegativeButton(R.string.about_close,null);
-        /* dialog.setNeutralButton(R.string.close_about,
-                new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        dialog.cancel();
-                    }
-                });*/
-
         dialog.setView(view);
         dialog.show();
     }
 
+    private void updateDataBase(){
+        final ProgressDialog dialog = ProgressDialog.show(
+                this, "", "Loading...please wait");
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                if (dialog != null && dialog.isShowing()) {
+                    dialog.dismiss();
+                }
+            }
+        }).start();
+
+    }
     /**
      * A {@link FragmentPagerAdapter} that returns a fragment corresponding to
      * one of the sections/tabs/pages.
