@@ -13,6 +13,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.TextView;
 
 import com.wblachowski.swarzedzkibus.R;
 import com.wblachowski.swarzedzkibus.data.MainDataBaseHelper;
@@ -163,6 +164,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void showAboutDialog(){
         View view = getLayoutInflater().inflate( R.layout.dialog_information, null );
+        ((TextView) view.findViewById(R.id.about_update_date)).setText(SettingsDataBaseHelper.getInstance(this).getLastUpdateString());
         AlertDialog.Builder dialog = new AlertDialog.Builder( this );
         dialog.setTitle(R.string.about_title).setNegativeButton(R.string.about_close,null);
         dialog.setView(view);

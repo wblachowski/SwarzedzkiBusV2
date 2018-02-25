@@ -112,6 +112,18 @@ public class SettingsDataBaseHelper extends SQLiteOpenHelper {
         }
     }
 
+    public String getLastUpdateString(){
+        try{
+            String query="SELECT value FROM about WHERE key='database_date'";
+            Cursor cursor = myDataBase.rawQuery(query,null);
+            cursor.moveToFirst();
+            return cursor.getString(cursor.getColumnIndex("value"));
+        }
+        catch(Exception ex){
+            return "";
+        }
+    }
+
     @Override
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
 
