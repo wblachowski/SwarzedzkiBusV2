@@ -1,5 +1,6 @@
 package com.wblachowski.swarzedzkibus.activities;
 
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
@@ -16,6 +17,7 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.wblachowski.swarzedzkibus.R;
+import com.wblachowski.swarzedzkibus.data.DataBaseUpdater;
 import com.wblachowski.swarzedzkibus.data.MainDataBaseHelper;
 import com.wblachowski.swarzedzkibus.data.SettingsDataBaseHelper;
 import com.wblachowski.swarzedzkibus.fragments.AllFragment;
@@ -43,6 +45,7 @@ public class MainActivity extends AppCompatActivity {
      */
     private ViewPager mViewPager;
     private MainDataBaseHelper myDbHelper;
+    private DataBaseUpdater myDbUpdater;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -101,6 +104,9 @@ public class MainActivity extends AppCompatActivity {
         tabLayout.getTabAt(0).setIcon(R.drawable.tab_favourites);
         tabLayout.getTabAt(1).setIcon(R.drawable.tab_all);
         tabLayout.getTabAt(2).setIcon(R.drawable.tab_search);
+
+        myDbUpdater=new DataBaseUpdater(this);
+        checkForUpdates();
     }
 
 
@@ -189,6 +195,31 @@ public class MainActivity extends AppCompatActivity {
             }
         }).start();
 
+    }
+
+    private void checkForUpdates(){
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                if(myDbUpdater.isUpdateAvailable()){
+                    displayUpdateAvailable();
+                }
+            }
+        }).start();
+    }
+
+    private void displayUpdateAvailable(){
+        final Activity activity = this;
+        this.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+                builder.setTitle(activity.getString(R.string.update_available_title))
+                        .setMessage(activity.getString(R.string.update_available_msg))
+                        .setPositiveButton("Tak",null)
+                        .setNegativeButton("Nie",null).show();
+            }
+        });
     }
     /**
      * A {@link FragmentPagerAdapter} that returns a fragment corresponding to
