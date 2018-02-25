@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">Swarzędzki Bus</string>
-    <string name="database_url">https://goo.gl/RBHj2W</string>
-    <string name="database_update_url">https://goo.gl/oFCpbo</string>
+    <string name="database_url">http://www.wojciech.blachowski.student.put.poznan.pl/buses.db</string>
+    <string name="database_update_url">http://www.wojciech.blachowski.student.put.poznan.pl/time.txt</string>
     <string name="version">2.0</string>
     <string name="database_title">Ostatnia aktualizacja rozkładów:</string>
 
