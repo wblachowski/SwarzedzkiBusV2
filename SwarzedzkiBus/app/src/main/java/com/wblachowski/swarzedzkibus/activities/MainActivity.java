@@ -105,7 +105,7 @@ public class MainActivity extends AppCompatActivity {
         tabLayout.getTabAt(1).setIcon(R.drawable.tab_all);
         tabLayout.getTabAt(2).setIcon(R.drawable.tab_search);
 
-        myDbUpdater=new DataBaseUpdater(this);
+        myDbUpdater = new DataBaseUpdater(this);
         checkForUpdates();
     }
 
@@ -168,47 +168,58 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void showAboutDialog(){
-        View view = getLayoutInflater().inflate( R.layout.dialog_information, null );
+    private void showAboutDialog() {
+        View view = getLayoutInflater().inflate(R.layout.dialog_information, null);
         ((TextView) view.findViewById(R.id.about_update_date)).setText(SettingsDataBaseHelper.getInstance(this).getLastUpdateString());
-        AlertDialog.Builder dialog = new AlertDialog.Builder( this );
-        dialog.setTitle(R.string.about_title).setNegativeButton(R.string.about_close,null);
+        AlertDialog.Builder dialog = new AlertDialog.Builder(this);
+        dialog.setTitle(R.string.about_title).setNegativeButton(R.string.about_close, null);
         dialog.setView(view);
         dialog.show();
     }
 
-    private void updateDataBase(){
+    private void updateDataBase() {
         final ProgressDialog dialog = ProgressDialog.show(
-                this, "", "Loading...please wait");
+                this, "", "Sprawdzanie aktualizacji");
 
         new Thread(new Runnable() {
             @Override
             public void run() {
-                try {
-                    Thread.sleep(1000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                if (dialog != null && dialog.isShowing()) {
-                    dialog.dismiss();
+                boolean isUpdateAvailable = myDbUpdater.isUpdateAvailable();
+
+                if (isUpdateAvailable) {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            dialog.setMessage("Pobieram rozkład");
+                        }
+                    });
+                    boolean successfulUpdate = myDbUpdater.update();
+                    if (dialog != null && dialog.isShowing()) {
+                        dialog.dismiss();
+                    }
+                    displayUpdated(successfulUpdate);
+                } else {
+                    displayUpToDate();
+                    if (dialog != null && dialog.isShowing()) {
+                        dialog.dismiss();
+                    }
                 }
             }
         }).start();
-
     }
 
-    private void checkForUpdates(){
+    private void checkForUpdates() {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                if(myDbUpdater.isUpdateAvailable()){
+                if (myDbUpdater.isUpdateAvailable()) {
                     displayUpdateAvailable();
                 }
             }
         }).start();
     }
 
-    private void displayUpdateAvailable(){
+    private void displayUpdateAvailable() {
         final Activity activity = this;
         this.runOnUiThread(new Runnable() {
             @Override
@@ -216,11 +227,45 @@ public class MainActivity extends AppCompatActivity {
                 AlertDialog.Builder builder = new AlertDialog.Builder(activity);
                 builder.setTitle(activity.getString(R.string.update_available_title))
                         .setMessage(activity.getString(R.string.update_available_msg))
-                        .setPositiveButton("Tak",null)
-                        .setNegativeButton("Nie",null).show();
+                        .setPositiveButton("Tak", null)
+                        .setNegativeButton("Nie", null).show();
             }
         });
     }
+
+    private void displayUpToDate() {
+        final Activity activity = this;
+        this.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+                builder.setMessage("Rozkład jest aktualny")
+                        .setPositiveButton("Ok", null).show();
+            }
+        });
+    }
+
+    private void displayUpdated(boolean successful) {
+        final String title, msg;
+        if (successful) {
+            title = "Sukces";
+            msg = "Zaktualizowano rozkład";
+        } else {
+            title = "Błąd";
+            msg = "Nie udało się zaktualizować rozkładu";
+        }
+        final Activity activity = this;
+        this.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+                builder.setTitle(title)
+                        .setMessage(msg)
+                        .setPositiveButton("Ok", null).show();
+            }
+        });
+    }
+
     /**
      * A {@link FragmentPagerAdapter} that returns a fragment corresponding to
      * one of the sections/tabs/pages.
