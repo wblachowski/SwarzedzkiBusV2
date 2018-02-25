@@ -6,6 +6,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 import java.io.File;
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -72,10 +73,7 @@ public class SettingsDataBaseHelper extends SQLiteOpenHelper {
             return null;
         }
         Long lastModified = file.lastModified();
-        SimpleDateFormat dateFormat=new SimpleDateFormat("dd/MM/yyyy");
-        Date date=new Date();
-        date.setTime(lastModified);
-        return dateFormat.format(date);
+        return lastModified.toString();
     }
 
     public void insertIntoFavourites(String stopId, String direction) {
@@ -114,13 +112,26 @@ public class SettingsDataBaseHelper extends SQLiteOpenHelper {
 
     public String getLastUpdateString(){
         try{
-            String query="SELECT value FROM about WHERE key='database_date'";
-            Cursor cursor = myDataBase.rawQuery(query,null);
-            cursor.moveToFirst();
-            return cursor.getString(cursor.getColumnIndex("value"));
+            Long longDate = getLastUpdateLong();
+            Date date = new Date(longDate);
+            DateFormat df = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
+            return df.format(date);
         }
         catch(Exception ex){
             return "";
+        }
+    }
+
+    public Long getLastUpdateLong(){
+        try{
+            String query="SELECT value FROM about WHERE key='database_date'";
+            Cursor cursor = myDataBase.rawQuery(query,null);
+            cursor.moveToFirst();
+            String string =  cursor.getString(cursor.getColumnIndex("value"));
+            return new Long(string);
+        }
+        catch(Exception ex){
+            return new Long(0);
         }
     }
 

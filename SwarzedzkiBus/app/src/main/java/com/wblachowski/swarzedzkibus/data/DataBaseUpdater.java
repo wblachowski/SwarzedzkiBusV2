@@ -10,9 +10,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URL;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Scanner;
 
 /**
@@ -28,10 +25,9 @@ public class DataBaseUpdater {
     }
 
     public boolean isUpdateAvailable() {
-        Calendar lastUpdateTime = getLastUpdateTime();
-        Calendar currentDbTime = getCurrentDbTime();
-        boolean upd = lastUpdateTime.before(currentDbTime);
-        return lastUpdateTime.before(currentDbTime);
+        Long lastUpdateTime = SettingsDataBaseHelper.getInstance(myContext).getLastUpdateLong();
+        Long currentDbTime = getCurrentDbTime();
+        return lastUpdateTime<currentDbTime;
     }
 
     public boolean update() {
@@ -47,40 +43,16 @@ public class DataBaseUpdater {
         }
     }
 
-    private Calendar getLastUpdateTime() {
-        Calendar cal = Calendar.getInstance();
-        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-        String date = SettingsDataBaseHelper.getInstance(null).getLastUpdateString();
-        try {
-            cal.setTime(sdf.parse(date));
-        } catch (ParseException e) {
-            return cal;
-        }
-        return cal;
-    }
-
-    private Calendar getCurrentDbTime() {
-        Calendar cal = Calendar.getInstance();
-        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-        String date = downloadDbDate();
-        try {
-            cal.setTime(sdf.parse(date));
-        } catch (ParseException e) {
-            return cal;
-        }
-        return cal;
-    }
-
-    private String downloadDbDate() {
+    private Long getCurrentDbTime() {
         try {
             URL website = new URL(myContext.getResources().getString(R.string.database_update_url));
             try (InputStream in = website.openStream()) {
                 Scanner s = new Scanner(in).useDelimiter("\\A");
                 String result = s.hasNext() ? s.next() : "";
-                return result;
+                return new Long(result);
             }
         } catch (Exception ex) {
-            return "";
+            return new Long(0);
         }
     }
 
