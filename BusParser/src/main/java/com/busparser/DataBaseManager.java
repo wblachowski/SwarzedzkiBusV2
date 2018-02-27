@@ -1,7 +1,6 @@
 package com.busparser;
 
-import java.io.File;
-import java.io.InputStream;
+import java.io.*;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.Map;
@@ -10,6 +9,7 @@ import java.util.Properties;
 public class DataBaseManager {
 
     String filename;
+    String filenameTime;
     String url;
 
     public void createNewDatabase() {
@@ -72,6 +72,20 @@ public class DataBaseManager {
             pstmt.executeUpdate();
         } catch (SQLException e) {
             System.out.println(e.getMessage());
+        }
+    }
+
+    public void setFinishTime(){
+        Long time = System.currentTimeMillis();
+        try (Writer writer = new BufferedWriter(new OutputStreamWriter(
+                new FileOutputStream(filenameTime), "utf-8"))) {
+            writer.write(time.toString());
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
@@ -275,6 +289,7 @@ public class DataBaseManager {
             InputStream input = getClass().getResourceAsStream("/config.properties");
             prop.load(input);
             filename = prop.getProperty("databaseFile");
+            filenameTime = prop.getProperty("databaseTimeFile");
         } catch (Exception ex) {
             ex.printStackTrace();
         }

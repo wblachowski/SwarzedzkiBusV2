@@ -49,6 +49,9 @@ public class BusParser {
                 dataBaseManager.insertRoute(busName, linksRightStops);
                 System.out.println();
             }
+            dataBaseManager.setFinishTime();
+
+            //updateIfNeeded();
         } catch (Exception ex) {
             ex.printStackTrace();
         }
