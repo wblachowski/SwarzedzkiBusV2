@@ -1,5 +1,6 @@
 package com.busparser;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.pdfbox.pdfparser.PDFParser;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
@@ -7,16 +8,25 @@ import org.apache.pdfbox.text.PDFTextStripperByArea;
 
 import java.awt.*;
 import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Scanner;
 import java.util.regex.Pattern;
 
 public class BusParser {
 
     String urlToBuses;
+    String dbPath;
+    String dbFile;
+    String dbTimeFile;
     WebParser webParser;
     FileManager fileManager;
     PDFmanager pdfManager;
@@ -51,7 +61,7 @@ public class BusParser {
             }
             dataBaseManager.setFinishTime();
 
-            //updateIfNeeded();
+            updateIfNeeded();
         } catch (Exception ex) {
             ex.printStackTrace();
         }
@@ -73,6 +83,9 @@ public class BusParser {
             InputStream input = getClass().getResourceAsStream("/config.properties");
             prop.load(input);
             urlToBuses = prop.getProperty("urlToBuses");
+            dbPath = prop.getProperty("databasePath");
+            dbFile = prop.getProperty("databaseFile");
+            dbTimeFile = prop.getProperty("databaseTimeFile");
         } catch (Exception ex) {
             ex.printStackTrace();
         }
@@ -92,6 +105,31 @@ public class BusParser {
             ex.printStackTrace();
         } finally {
             fileManager.cleanUp();
+        }
+    }
+
+    private void updateIfNeeded() {
+        if (isUpdateNeeded()) {
+            Path newDbPath = new File(dbFile).toPath();
+            Path newTimePath = new File(dbTimeFile).toPath();
+            Path toDbPath = Paths.get(dbPath + dbFile);
+            Path toTimePath = Paths.get(dbPath + dbTimeFile);
+            try {
+                Files.copy(newDbPath, toDbPath, StandardCopyOption.REPLACE_EXISTING);
+                Files.copy(newTimePath, toTimePath, StandardCopyOption.REPLACE_EXISTING);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private boolean isUpdateNeeded() {
+        try {
+            File newFile = new File(dbFile);
+            File oldFile = new File(dbPath + dbFile);
+            return !FileUtils.contentEquals(newFile, oldFile);
+        } catch (Exception ex) {
+            return false;
         }
     }
 }
