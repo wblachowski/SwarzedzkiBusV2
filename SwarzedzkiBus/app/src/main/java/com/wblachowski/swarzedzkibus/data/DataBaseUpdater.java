@@ -37,6 +37,7 @@ public class DataBaseUpdater {
             try (InputStream in = website.openStream(); OutputStream outStream = new FileOutputStream(targetFile)) {
                 copyStream(in, outStream);
             }
+            SettingsDataBaseHelper.getInstance(myContext).updateLastUpdateTime();
             return true;
         } catch (Exception e) {
             return false;

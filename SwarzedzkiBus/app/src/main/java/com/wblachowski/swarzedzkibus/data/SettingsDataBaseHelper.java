@@ -135,6 +135,17 @@ public class SettingsDataBaseHelper extends SQLiteOpenHelper {
         }
     }
 
+    public void updateLastUpdateTime(){
+        try{
+            String query="UPDATE about SET value=? WHERE KEY='database_date'";
+            String time = String.valueOf(System.currentTimeMillis());
+            myDataBase.execSQL(query, new String[]{time});
+        }
+        catch (Exception ex){
+
+        }
+    }
+
     @Override
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
 
