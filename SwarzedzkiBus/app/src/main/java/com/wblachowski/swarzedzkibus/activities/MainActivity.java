@@ -2,6 +2,7 @@ package com.wblachowski.swarzedzkibus.activities;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
@@ -227,7 +228,12 @@ public class MainActivity extends AppCompatActivity {
                 AlertDialog.Builder builder = new AlertDialog.Builder(activity);
                 builder.setTitle(activity.getString(R.string.update_available_title))
                         .setMessage(activity.getString(R.string.update_available_msg))
-                        .setPositiveButton("Tak", null)
+                        .setPositiveButton("Tak", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                updateDataBase();
+                            }
+                        })
                         .setNegativeButton("Nie", null).show();
             }
         });
