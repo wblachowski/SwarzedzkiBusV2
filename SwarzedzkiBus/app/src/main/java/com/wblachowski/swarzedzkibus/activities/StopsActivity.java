@@ -1,5 +1,6 @@
 package com.wblachowski.swarzedzkibus.activities;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
@@ -14,6 +15,9 @@ import com.wblachowski.swarzedzkibus.adapters.StopsCursorAdapter;
 import com.wblachowski.swarzedzkibus.data.MainDataBaseHelper;
 
 public class StopsActivity extends AppCompatActivity {
+    StopsCursorAdapter cursorAdapter;
+    Cursor cursor;
+    ListView listView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,10 +29,30 @@ public class StopsActivity extends AppCompatActivity {
         setTitle("Linia " + nr);
 
         //final Cursor cursor = MainDataBaseHelper.getInstance(this).getStopsCursor(routeId);
-        final Cursor cursor = MainDataBaseHelper.getInstance(this).getStopsCursorWithTimes(routeId);
-        ListView listView = (ListView)findViewById(R.id.stops_list_view);
-        StopsCursorAdapter cursorAdapter = new StopsCursorAdapter(this,cursor);
+        cursor = MainDataBaseHelper.getInstance(this).getStopsCursorWithTimes(routeId);
+        listView = (ListView)findViewById(R.id.stops_list_view);
+        cursorAdapter = new StopsCursorAdapter(this,cursor);
         listView.setAdapter(cursorAdapter);
+
+        final Activity activity = this;
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                while(true) {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            cursorAdapter.swapCursor(MainDataBaseHelper.getInstance(activity).getStopsCursorWithTimes(routeId));
+                        }
+                    });
+                    try {
+                        Thread.sleep(10*1000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }).start();
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
