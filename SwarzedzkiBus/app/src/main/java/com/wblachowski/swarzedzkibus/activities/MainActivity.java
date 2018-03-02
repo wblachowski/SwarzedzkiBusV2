@@ -3,7 +3,10 @@ package com.wblachowski.swarzedzkibus.activities;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -66,6 +69,7 @@ public class MainActivity extends AppCompatActivity {
                         updateDataBase();
                         break;
                     case R.id.action_settings:
+                        showSettingsActivity();
                         break;
                     case R.id.action_about:
                         showAboutDialog();
@@ -109,7 +113,6 @@ public class MainActivity extends AppCompatActivity {
         myDbUpdater = new DataBaseUpdater(this);
         checkForUpdates();
     }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -178,6 +181,14 @@ public class MainActivity extends AppCompatActivity {
         dialog.show();
     }
 
+    private void showSettingsActivity() {
+        try{
+        Intent intent = new Intent(this,SettingsActivity.class);
+        startActivity(intent);}catch (Exception ex){
+            System.out.println(ex.getMessage());
+        }
+    }
+
     private void updateDataBase() {
         final ProgressDialog dialog = ProgressDialog.show(
                 this, "", "Sprawdzanie aktualizacji");
@@ -210,6 +221,10 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void checkForUpdates() {
+        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
+        boolean val = pref.getBoolean(getString(R.string.key_auto_update),true);
+        if(!val)return;
+
         new Thread(new Runnable() {
             @Override
             public void run() {

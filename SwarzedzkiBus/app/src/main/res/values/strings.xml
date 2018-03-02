@@ -15,4 +15,18 @@
 
     <string name="update_available_title">Aktualizacja rozkładu dostępna</string>
     <string name="update_available_msg">Czy chesz pobrać nowy rozkład jazdy?</string>
+    <string name="title_activity_settings">Settings</string>
+
+    <!-- Strings related to Settings -->
+    <string name="pref_title_main_category">Ogólne</string>
+
+    <string name="pref_title_auto_update">Automatyczne aktualizacje</string>
+    <string name="summary_auto_update_enabled">Sprawdzaj aktualizacje rozkładów przy każdym uruchomieniu aplikacji</string>
+    <string name="summary_auto_update_disabled">Manualne sprawdzanie aktualizacji</string>
+    <string name="key_auto_update">auto_update</string>
+
+    <string name="pref_title_departure_time">Godzina najbliższego odjazdu</string>
+    <string name="summary_departure_time_enabled">Wyświetlaj czas najbliższego odjazdu koło nazwy przystanku</string>
+    <string name="summary_departure_time_disabled">Nie wyświetlaj czasu najbliższego odjazdu</string>
+    <string name="key_departure_time">departure_time</string>
 </resources>
