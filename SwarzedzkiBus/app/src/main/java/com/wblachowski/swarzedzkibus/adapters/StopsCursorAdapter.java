@@ -32,9 +32,26 @@ public class StopsCursorAdapter extends CursorAdapter {
         final String stopName = cursor.getString(cursor.getColumnIndex("name"));
         final String stopId = cursor.getString(cursor.getColumnIndex("stop_id"));
         final String direction = cursor.getString(cursor.getColumnIndex("LAST_STOP"));
+        TextView timeText = view.findViewById(R.id.stop_time);
+        timeText.setText("");
+        if(cursor.getColumnIndex("hour")>-1 && cursor.getColumnIndex("minute")>-1) {
+            final String hour = cursor.getString(cursor.getColumnIndex("hour"));
+            final String minute = cursor.getString(cursor.getColumnIndex("minute"));
+            if(hour!= null && minute !=null){
+                final String full;
+                if(minute.length()==1){
+                    full=hour+":0"+minute;
+                }else{
+                    full=hour+":"+minute;
+                }
+                timeText.setText(full);
+            }
+        }
         final boolean isFavourite = cursor.getString(cursor.getColumnIndex("favourite")).equals("1");
         TextView stopText = view.findViewById(R.id.stop_name);
         stopText.setText(cursor.getString(cursor.getColumnIndex("name")));
+
+
         ImageView stopImage = view.findViewById(R.id.stop_image);
         if (cursor.isFirst()) {
             stopImage.setImageResource(R.drawable.oval_stop_start);

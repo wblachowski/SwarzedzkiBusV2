@@ -24,7 +24,8 @@ public class StopsActivity extends AppCompatActivity {
         final String routeId=getIntent().getStringExtra("routeId").toString();
         setTitle("Linia " + nr);
 
-        final Cursor cursor = MainDataBaseHelper.getInstance(this).getStopsCursor(routeId);
+        //final Cursor cursor = MainDataBaseHelper.getInstance(this).getStopsCursor(routeId);
+        final Cursor cursor = MainDataBaseHelper.getInstance(this).getStopsCursorWithTimes(routeId);
         ListView listView = (ListView)findViewById(R.id.stops_list_view);
         StopsCursorAdapter cursorAdapter = new StopsCursorAdapter(this,cursor);
         listView.setAdapter(cursorAdapter);

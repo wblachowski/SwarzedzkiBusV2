@@ -11,6 +11,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Calendar;
 
 /**
  * Created by wblachowski on 2/18/2018.
@@ -195,6 +196,41 @@ public class MainDataBaseHelper extends SQLiteOpenHelper {
         } catch (Exception ex) {
             System.out.println(ex.getMessage());
             return null;
+        }
+    }
+
+    public Cursor getStopsCursorWithTimes(String routeId){
+        String query="SELECT routes.rowid _id, bus_name, routes.id, stop_order, routes.stop_id,stops.name,  (routes.stop_id || ' ' || lastStop.name) in(" + SettingsDataBaseHelper.getInstance(myContext).getFavouritesString() + ") as favourite, lastStop.name as LAST_STOP, nextTime.hour, nextTime.minute   from buses_routes join routes on buses_routes.route_id=routes.id join stops on stops.id=routes.stop_id \n" +
+                " join (SELECT max(stop_order), stops.name FROM routes JOIN stops ON routes.stop_id=stops.id WHERE routes.id = @routeId) lastStop\n" +
+                " left outer join (  select time_tables.stop_id,type,hour,minute,(hour*60+minute) - (@hour*60+@minute) as diff,\n" +
+                "case when (hour*60+minute) - (@hour*60+@minute)>0 then (hour*60+minute) - (@hour*60+@minute) else 24*60-(@hour*60+@minute)+(hour*60+minute) end as diff_abs,\n" +
+                "min(case when (hour*60+minute) - (@hour*60+@minute)>0 then (hour*60+minute) - (@hour*60+@minute) else 24*60-(@hour*60+@minute)+(hour*60+minute) end) as minimum\n" +
+                " from time_tables join routes on time_tables.stop_id=routes.stop_id\n" +
+                " where  routes.id=@routeId and ((type= @todayType and diff>0)or (type=@tommorowType and diff<0))group by time_tables.stop_id ) nextTime on nextTime.stop_id=routes.stop_id\n" +
+                " WHERE routes.id = @routeId order by routes.id, stop_order";
+        int todayType=getDayType(0);
+        int tommorowType=getDayType(1);
+        int currentMinute=Calendar.getInstance().get(Calendar.MINUTE);
+        int currentHour = Calendar.getInstance().get(Calendar.HOUR_OF_DAY);
+        try{
+            return myDataBase.rawQuery(query,new String[]{routeId,String.valueOf(currentHour),String.valueOf(currentMinute),String.valueOf(todayType),String.valueOf(tommorowType)});
+        }catch (Exception ex){
+            System.out.println(ex.getMessage());
+            return null;
+        }
+    }
+
+    private int getDayType(int offset){
+        Calendar cal = Calendar.getInstance();
+        int dayOfWeek = cal.get(Calendar.DAY_OF_WEEK);
+        dayOfWeek+=offset;
+        if(dayOfWeek==8)dayOfWeek=1;
+        if(dayOfWeek>=2 && dayOfWeek<=6){
+            return 0;
+        }else if(dayOfWeek==7){
+            return 1;
+        }else{
+            return 2;
         }
     }
 
