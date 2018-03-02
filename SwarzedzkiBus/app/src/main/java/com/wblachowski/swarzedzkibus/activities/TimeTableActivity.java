@@ -15,6 +15,8 @@ import android.widget.TextView;
 import com.wblachowski.swarzedzkibus.R;
 import com.wblachowski.swarzedzkibus.fragments.TimeTableFragment;
 
+import java.util.Calendar;
+
 public class TimeTableActivity extends AppCompatActivity {
 
     /**
@@ -54,6 +56,22 @@ public class TimeTableActivity extends AppCompatActivity {
         setToolbarInfo();
         stopId=getIntent().getStringExtra("id").toString();
         fragments=new TimeTableFragment[3];
+        setStartingTab();
+    }
+
+    private void setStartingTab(){
+        Calendar calendar = Calendar.getInstance();
+        int dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK);
+        //mon-friday = 2-6
+        //sunday = 1
+        //saturday = 7
+        if(dayOfWeek>=2 && dayOfWeek<=6){
+            mViewPager.setCurrentItem(0);
+        }else if(dayOfWeek==7){
+            mViewPager.setCurrentItem(1);
+        }else{
+            mViewPager.setCurrentItem(2);
+        }
     }
 
     public String getStopId(){
