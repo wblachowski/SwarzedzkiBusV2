@@ -6,6 +6,9 @@ import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.preference.PreferenceManager;
+
+import com.wblachowski.swarzedzkibus.R;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -185,7 +188,16 @@ public class MainDataBaseHelper extends SQLiteOpenHelper {
         }
     }
 
-    public Cursor getStopsCursor(String routeId) {
+    public Cursor getStopsCursor(String routeId){
+        boolean isTimes = PreferenceManager.getDefaultSharedPreferences(myContext).getBoolean(myContext.getResources().getString(R.string.key_departure_time),true);
+        if(isTimes){
+            return getStopsCursorWithTimes(routeId);
+        }else{
+            return getStopsCursorWithoutTimes(routeId);
+        }
+    }
+
+    public Cursor getStopsCursorWithoutTimes(String routeId) {
         String query = "SELECT routes.rowid _id, bus_name, routes.id, stop_order, stop_id,stops.name, " +
                 " (stop_id || ' ' || lastStop.name) in(" + SettingsDataBaseHelper.getInstance(myContext).getFavouritesString() + ") as favourite, lastStop.name as LAST_STOP  " +
                 " from buses_routes join routes on buses_routes.route_id=routes.id join stops on stops.id=stop_id \n" +

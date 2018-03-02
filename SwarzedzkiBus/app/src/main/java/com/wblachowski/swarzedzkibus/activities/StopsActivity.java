@@ -28,8 +28,7 @@ public class StopsActivity extends AppCompatActivity {
         final String routeId=getIntent().getStringExtra("routeId").toString();
         setTitle("Linia " + nr);
 
-        //final Cursor cursor = MainDataBaseHelper.getInstance(this).getStopsCursor(routeId);
-        cursor = MainDataBaseHelper.getInstance(this).getStopsCursorWithTimes(routeId);
+        cursor = MainDataBaseHelper.getInstance(this).getStopsCursor(routeId);
         listView = (ListView)findViewById(R.id.stops_list_view);
         cursorAdapter = new StopsCursorAdapter(this,cursor);
         listView.setAdapter(cursorAdapter);
@@ -42,7 +41,7 @@ public class StopsActivity extends AppCompatActivity {
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            cursorAdapter.swapCursor(MainDataBaseHelper.getInstance(activity).getStopsCursorWithTimes(routeId));
+                            cursorAdapter.swapCursor(MainDataBaseHelper.getInstance(activity).getStopsCursor(routeId));
                         }
                     });
                     try {
