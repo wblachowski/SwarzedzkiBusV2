@@ -1,6 +1,5 @@
 package com.wblachowski.swarzedzkibus.activities;
 
-import android.app.Activity;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
@@ -12,7 +11,6 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.wblachowski.swarzedzkibus.R;
 import com.wblachowski.swarzedzkibus.data.SettingsDataBaseHelper;
@@ -38,7 +36,9 @@ public class TimeTableActivity extends AppCompatActivity {
      */
     private ViewPager mViewPager;
     private boolean isFavourite = false;
-    private Menu menu;
+    private String id;
+    private String direction;
+    private SettingsDataBaseHelper dataBaseHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,6 +57,7 @@ public class TimeTableActivity extends AppCompatActivity {
 
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(mViewPager);
+        dataBaseHelper = SettingsDataBaseHelper.getInstance(this);
 
         setToolbarInfo();
         stopId = getIntent().getStringExtra("id").toString();
@@ -86,33 +87,29 @@ public class TimeTableActivity extends AppCompatActivity {
     private void setToolbarInfo() {
         TextView nr = (TextView) findViewById(R.id.time_table_bus_nr);
         TextView stopName = (TextView) findViewById(R.id.time_table_stop_name);
-        TextView direction = (TextView) findViewById(R.id.time_table_direction);
-        nr.setText(getIntent().getStringExtra("nr").toString());
-        stopName.setText(getIntent().getStringExtra("stopName").toString());
-        direction.setText(getIntent().getStringExtra("direction").toString());
+        TextView directionTv = (TextView) findViewById(R.id.time_table_direction);
+        nr.setText(getIntent().getStringExtra("nr"));
+        stopName.setText(getIntent().getStringExtra("stopName"));
+        directionTv.setText(getIntent().getStringExtra("direction"));
+        id = getIntent().getStringExtra("id");
+        direction = getIntent().getStringExtra("direction");
     }
 
 
     @Override
     public boolean onCreateOptionsMenu(final Menu menu) {
-        this.menu=menu;
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_time_table, menu);
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                isFavourite = SettingsDataBaseHelper.getInstance(null).isStopFavourite(getIntent().getStringExtra("id"), getIntent().getStringExtra("direction"));
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        MenuItem menuItem = menu.findItem(R.id.action_favourite);
-                        menuItem.setTitle(isFavourite ? getString(R.string.action_unfavourite) : getString(R.string.action_favourite));
-                    }
-                });
-            }
-        }).start();
+
+        isFavourite = SettingsDataBaseHelper.getInstance(null).isStopFavourite(getIntent().getStringExtra("id"), getIntent().getStringExtra("direction"));
+
+        MenuItem menuItem = menu.findItem(R.id.action_favourite);
+        menuItem.setTitle(isFavourite ? getString(R.string.action_unfavourite) : getString(R.string.action_favourite));
+
         return true;
     }
+
+    Thread thread;
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -120,32 +117,28 @@ public class TimeTableActivity extends AppCompatActivity {
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-        final Activity activity = this;
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_favourite) {
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    final boolean succesful;
-                    if(isFavourite){
-                        succesful = SettingsDataBaseHelper.getInstance(activity).deleteFromFavourites(getIntent().getStringExtra("id"),getIntent().getStringExtra("direction"));
-                        if(succesful)isFavourite=false;
-                    }else{
-                        succesful = SettingsDataBaseHelper.getInstance(activity).insertIntoFavourites(getIntent().getStringExtra("id"),getIntent().getStringExtra("direction"));
-                        if(succesful)isFavourite=true;
-                    }
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            if(succesful) {
-                                Toast.makeText(activity, isFavourite ?  "Dodano do ulubionych" : "Usunięto z ulubionych",
-                                        Toast.LENGTH_LONG).show();
-                                menu.findItem(R.id.action_favourite).setTitle(isFavourite ? getString(R.string.action_unfavourite) : getString(R.string.action_favourite));
-                            }
-                        }
-                    });
-                }
-            }).start();
+            boolean successful;/*
+            if (isFavourite) {
+                successful = dataBaseHelper.deleteFromFavourites(this.id, direction);
+                if (successful) isFavourite = false;
+            } else {
+                successful =dataBaseHelper.insertIntoFavourites(this.id, direction);
+                if (successful) isFavourite = true;
+            }
+            if (successful) {
+                item.setTitle(isFavourite ? getString(R.string.action_unfavourite) : getString(R.string.action_favourite));
+                Toast.makeText(this, isFavourite ? "Dodano do ulubionych" : "Usunięto z ulubionych",
+                        Toast.LENGTH_LONG).show();
+            }*/
+                successful = dataBaseHelper.deleteFromFavourites(this.id, direction);
+                //successful = dataBaseHelper.insertIntoFavourites(this.id, direction);
+
+
+
+
+
         }
 
         return super.onOptionsItemSelected(item);

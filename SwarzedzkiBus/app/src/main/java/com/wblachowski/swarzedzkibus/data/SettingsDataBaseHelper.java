@@ -87,6 +87,7 @@ public class SettingsDataBaseHelper extends SQLiteOpenHelper {
             return true;
         } catch (Exception ex) {
             //this stop is already in favourites
+            System.out.print(ex.getMessage());
             return false;
         }
     }
@@ -98,6 +99,7 @@ public class SettingsDataBaseHelper extends SQLiteOpenHelper {
             return true;
         } catch (Exception ex) {
             //log info
+            System.out.print(ex.getMessage());
             return false;
         }
     }

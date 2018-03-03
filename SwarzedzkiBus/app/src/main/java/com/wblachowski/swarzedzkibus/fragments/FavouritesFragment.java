@@ -18,6 +18,8 @@ import com.wblachowski.swarzedzkibus.data.MainDataBaseHelper;
 import com.wblachowski.swarzedzkibus.data.Stop;
 
 import java.util.ArrayList;
+import java.util.Timer;
+import java.util.TimerTask;
 
 /**
  * Created by wblachowski on 2/18/2018.
@@ -30,41 +32,43 @@ public class FavouritesFragment extends Fragment {
     StickyHeaderGridLayoutManager mLayoutManager;
     ArrayList<Stop> stops = new ArrayList<>();
     FavouritesAdapter adapter;
-
+    MainDataBaseHelper dataBaseHelper;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_favourites, container, false);
-        noFavouritesLayout = rootView.findViewById(R.id.fragment_favourites_empty_layout);
 
-        // Setup recycler
-        mRecycler = (RecyclerView) rootView.findViewById(R.id.recycler_favourites);
-        mLayoutManager = new StickyHeaderGridLayoutManager(1);
-        mLayoutManager.setHeaderBottomOverlapMargin(0);
-        mRecycler.setLayoutManager(mLayoutManager);
-        adapter = null;
-        refreshStopsList(false);
-        startRefreshThreadIfNeeded();
+        View rootView = inflater.inflate(R.layout.fragment_favourites, container, false);
+        try {
+            noFavouritesLayout = rootView.findViewById(R.id.fragment_favourites_empty_layout);
+
+            // Setup recycler
+            mRecycler = (RecyclerView) rootView.findViewById(R.id.recycler_favourites);
+            mLayoutManager = new StickyHeaderGridLayoutManager(1);
+            mLayoutManager.setHeaderBottomOverlapMargin(0);
+            mRecycler.setLayoutManager(mLayoutManager);
+            adapter = null;
+            dataBaseHelper=MainDataBaseHelper.getInstance(getActivity());
+            refreshStopsList(false);
+            startRefreshThreadIfNeeded();
+        } catch (Exception ex) {
+            System.out.print(ex.getMessage());
+        }
         return rootView;
     }
 
+    Timer timer;
     private void startRefreshThreadIfNeeded() {
         SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(getActivity());
         boolean val = pref.getBoolean(getString(R.string.key_departure_time), true);
         if (!val) return;
-        new Thread(new Runnable() {
+
+        timer = new Timer();
+        timer.scheduleAtFixedRate(new TimerTask() {
             @Override
             public void run() {
-                while (isVisible()) {
-                    try {
-                        refreshStopsList(true);
-                        Thread.sleep(10 * 1000);
-                    } catch (Exception e) {
-                        System.out.print(e.getMessage());
-                    }
-                }
+                refreshStopsList(true);
             }
-        }).start();
+        }, 10 * 1000, 10 * 1000);
     }
 
     public void notifyStopsChanged() {
@@ -72,28 +76,26 @@ public class FavouritesFragment extends Fragment {
     }
 
     public void refreshStopsList(final boolean repeated) {
-        if (!repeated) {
-            adapter = null;
-        }
         final FavouritesFragment fragment = this;
         new Thread(new Runnable() {
             @Override
             public void run() {
                 try {
-                    ArrayList<Stop> currStops = parseCursorToStops(MainDataBaseHelper.getInstance(getActivity()).getFavouriteStops());
+                    ArrayList<Stop> currStops = parseCursorToStops(dataBaseHelper.getFavouriteStops());
                     if (stops == null) stops = new ArrayList<Stop>();
                     stops.clear();
                     stops.addAll(currStops);
+                    if(getActivity()==null)return;
                     getActivity().runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
                             try {
                                 setEmptyLayoutVisibility();
-                                if (adapter == null) {
+                                if (repeated && adapter!=null) {
+                                    adapter.notifyDataSetChanged();
+                                } else {
                                     adapter = new FavouritesAdapter(stops, fragment);
                                     mRecycler.setAdapter(adapter);
-                                } else {
-                                    adapter.notifyDataSetChanged();
                                 }
                             } catch (Exception ex) {
                                 System.out.println(ex.getMessage());
