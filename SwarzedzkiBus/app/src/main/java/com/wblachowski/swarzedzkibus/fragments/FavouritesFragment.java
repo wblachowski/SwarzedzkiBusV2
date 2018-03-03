@@ -42,25 +42,25 @@ public class FavouritesFragment extends Fragment {
         mLayoutManager = new StickyHeaderGridLayoutManager(1);
         mLayoutManager.setHeaderBottomOverlapMargin(0);
         mRecycler.setLayoutManager(mLayoutManager);
-        adapter=null;
+        adapter = null;
         refreshStopsList(false);
         startRefreshThreadIfNeeded();
         return rootView;
     }
 
-    private void startRefreshThreadIfNeeded(){
+    private void startRefreshThreadIfNeeded() {
         SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(getActivity());
-        boolean val = pref.getBoolean(getString(R.string.key_departure_time),true);
-        if(!val)return;
+        boolean val = pref.getBoolean(getString(R.string.key_departure_time), true);
+        if (!val) return;
         new Thread(new Runnable() {
             @Override
             public void run() {
-                while(isVisible()){
-                    refreshStopsList(true);
+                while (isVisible()) {
                     try {
-                        Thread.sleep(10*1000);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
+                        refreshStopsList(true);
+                        Thread.sleep(10 * 1000);
+                    } catch (Exception e) {
+                        System.out.print(e.getMessage());
                     }
                 }
             }
@@ -72,8 +72,8 @@ public class FavouritesFragment extends Fragment {
     }
 
     public void refreshStopsList(final boolean repeated) {
-        if(!repeated){
-            adapter=null;
+        if (!repeated) {
+            adapter = null;
         }
         final FavouritesFragment fragment = this;
         new Thread(new Runnable() {
@@ -81,21 +81,26 @@ public class FavouritesFragment extends Fragment {
             public void run() {
                 try {
                     ArrayList<Stop> currStops = parseCursorToStops(MainDataBaseHelper.getInstance(getActivity()).getFavouriteStops());
+                    if (stops == null) stops = new ArrayList<Stop>();
                     stops.clear();
                     stops.addAll(currStops);
                     getActivity().runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            setEmptyLayoutVisibility();
-                            if (adapter == null) {
-                                adapter = new FavouritesAdapter(stops, fragment);
-                                mRecycler.setAdapter(adapter);
-                            } else {
-                                adapter.notifyDataSetChanged();
+                            try {
+                                setEmptyLayoutVisibility();
+                                if (adapter == null) {
+                                    adapter = new FavouritesAdapter(stops, fragment);
+                                    mRecycler.setAdapter(adapter);
+                                } else {
+                                    adapter.notifyDataSetChanged();
+                                }
+                            } catch (Exception ex) {
+                                System.out.println(ex.getMessage());
                             }
                         }
                     });
-                }catch (Exception ex){
+                } catch (Exception ex) {
                     System.out.println(ex.getMessage());
                 }
             }
@@ -115,8 +120,8 @@ public class FavouritesFragment extends Fragment {
                 String stopName = cursor.getString(cursor.getColumnIndex("STOP"));
                 String direction = cursor.getString(cursor.getColumnIndex("FINAL_STOP"));
                 Stop stop = new Stop(stopId, busNr, stopName, direction);
-                if(cursor.getColumnIndex("hour")>-1 && cursor.getColumnIndex("minute")>-1){
-                    stop=new Stop(stopId,busNr,stopName,direction,cursor.getString(cursor.getColumnIndex("hour")),cursor.getString(cursor.getColumnIndex("minute")));
+                if (cursor.getColumnIndex("hour") > -1 && cursor.getColumnIndex("minute") > -1) {
+                    stop = new Stop(stopId, busNr, stopName, direction, cursor.getString(cursor.getColumnIndex("hour")), cursor.getString(cursor.getColumnIndex("minute")));
                 }
                 stops.add(stop);
             } while (cursor.moveToNext());

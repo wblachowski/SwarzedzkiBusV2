@@ -140,10 +140,13 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume()
     {
         super.onResume();
+        try{
         if(mViewPager.getCurrentItem()==0) {
             if(favouritesFragment!=null){
                 favouritesFragment.refreshStopsList(false);
             }
+        }}catch (Exception ex){
+            System.out.println(ex.getMessage());
         }
     }
 
