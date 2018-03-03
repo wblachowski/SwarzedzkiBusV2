@@ -92,7 +92,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
                 if (tab.getPosition() == 0) {
-                    favouritesFragment.refreshStopsList();
+                    favouritesFragment.refreshStopsList(false);
                 }
             }
 

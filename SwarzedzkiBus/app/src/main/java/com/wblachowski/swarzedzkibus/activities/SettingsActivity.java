@@ -2,13 +2,13 @@ package com.wblachowski.swarzedzkibus.activities;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.preference.CheckBoxPreference;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
 import android.view.MenuItem;
 
 import com.wblachowski.swarzedzkibus.R;
-import com.wblachowski.swarzedzkibus.data.SettingsDataBaseHelper;
 
 /**
  * Created by wblachowski on 3/1/2018.
@@ -53,8 +53,23 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
 
     private static void loadPreferencesValues(Preference[] preferences){
         for(Preference preference : preferences){
-            String value = SettingsDataBaseHelper.getInstance(preference.getContext()).getSetting(preference.getKey());
-
+            String stringValue="";
+            if(preference instanceof CheckBoxPreference) {
+                if(((CheckBoxPreference) preference).isChecked()){
+                    if (preference.getKey().equals(preference.getContext().getString(R.string.key_auto_update))) {
+                            stringValue = preference.getContext().getString(R.string.summary_auto_update_enabled);
+                    } else if (preference.getKey().equals(preference.getContext().getString(R.string.key_departure_time))) {
+                            stringValue = preference.getContext().getString(R.string.summary_departure_time_enabled);
+                    }
+                }else{
+                    if (preference.getKey().equals(preference.getContext().getString(R.string.key_auto_update))) {
+                        stringValue = preference.getContext().getString(R.string.summary_auto_update_disabled);
+                    } else if (preference.getKey().equals(preference.getContext().getString(R.string.key_departure_time))) {
+                        stringValue = preference.getContext().getString(R.string.summary_departure_time_disabled);
+                    }
+                }
+                preference.setSummary(stringValue);
+            }
         }
     }
 
@@ -66,8 +81,6 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
         @Override
         public boolean onPreferenceChange(Preference preference, Object newValue) {
             String stringValue="";
-
-            boolean res=SettingsDataBaseHelper.getInstance(preference.getContext()).updateSetting(preference.getKey(),newValue.toString());
 
             if (preference.getKey().equals(preference.getContext().getString(R.string.key_auto_update))) {
                 if ((Boolean)newValue) {
@@ -85,7 +98,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
 
             if(!stringValue.equals(""))preference.setSummary(stringValue);
 
-            PreferenceManager.getDefaultSharedPreferences(activity).edit().putBoolean(preference.getKey(),(Boolean)newValue);
+            PreferenceManager.getDefaultSharedPreferences(activity).edit().putBoolean(preference.getKey(),(Boolean)newValue).apply();
             return true;
         }
     };

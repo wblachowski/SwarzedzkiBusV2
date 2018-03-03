@@ -5,8 +5,6 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
-import com.wblachowski.swarzedzkibus.R;
-
 import java.io.File;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -64,21 +62,12 @@ public class SettingsDataBaseHelper extends SQLiteOpenHelper {
         try {
             insertDBcreateDate();
         }catch (Exception ex){}
-        try {
-            insertDefaultSettings();
-        }catch (Exception ex){}
     }
 
     private void insertDBcreateDate() {
         String query = "INSERT INTO about(key,value) VALUES('database_date',?)";
         String date = getDBfileDate();
         myDataBase.execSQL(query, new String[]{date});
-    }
-
-    private void insertDefaultSettings() {
-        String query = "INSERT INTO about(key,value) VALUES(?,'true')";
-        myDataBase.execSQL(query, new String[]{myContext.getString(R.string.key_auto_update)});
-        myDataBase.execSQL(query, new String[]{myContext.getString(R.string.key_departure_time)});
     }
 
     private String getDBfileDate() {
@@ -155,27 +144,6 @@ public class SettingsDataBaseHelper extends SQLiteOpenHelper {
             myDataBase.execSQL(query, new String[]{time});
         } catch (Exception ex) {
 
-        }
-    }
-
-    public boolean updateSetting(String key, String value) {
-        try {
-            String query = "UPDATE about SET value=? WHERE key=?";
-            myDataBase.execSQL(query, new String[]{value, key});
-            return true;
-        } catch (Exception ex) {
-            return false;
-        }
-    }
-
-    public String getSetting(String key){
-        try{
-            String query="SELECT value FROM about WHERE key=?";
-            Cursor cursor = myDataBase.rawQuery(query,new String[]{key});
-            cursor.moveToFirst();
-            return cursor.getString(cursor.getColumnIndex("value"));
-        }catch (Exception ex){
-            return "true";
         }
     }
 

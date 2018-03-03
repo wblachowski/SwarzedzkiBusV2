@@ -1,7 +1,9 @@
 package com.wblachowski.swarzedzkibus.fragments;
 
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -41,17 +43,20 @@ public class FavouritesFragment extends Fragment {
         mLayoutManager.setHeaderBottomOverlapMargin(0);
         mRecycler.setLayoutManager(mLayoutManager);
         adapter=null;
-        refreshStopsList();
+        refreshStopsList(false);
         startRefreshThreadIfNeeded();
         return rootView;
     }
 
     private void startRefreshThreadIfNeeded(){
+        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        boolean val = pref.getBoolean(getString(R.string.key_departure_time),true);
+        if(!val)return;
         new Thread(new Runnable() {
             @Override
             public void run() {
                 while(true){
-                    refreshStopsList();
+                    refreshStopsList(true);
                     try {
                         Thread.sleep(10*1000);
                     } catch (InterruptedException e) {
@@ -66,26 +71,33 @@ public class FavouritesFragment extends Fragment {
         setEmptyLayoutVisibility();
     }
 
-    public void refreshStopsList() {
+    public void refreshStopsList(final boolean repeated) {
+        if(!repeated){
+            adapter=null;
+        }
         final FavouritesFragment fragment = this;
         new Thread(new Runnable() {
             @Override
             public void run() {
-                ArrayList<Stop> currStops = parseCursorToStops(MainDataBaseHelper.getInstance(getActivity()).getFavouriteStops());
-                stops.clear();
-                stops.addAll(currStops);
-                getActivity().runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        setEmptyLayoutVisibility();
-                        if(adapter==null){
-                            adapter = new FavouritesAdapter(stops,fragment);
-                            mRecycler.setAdapter(adapter);
-                        }else{
-                            adapter.notifyDataSetChanged();
+                try {
+                    ArrayList<Stop> currStops = parseCursorToStops(MainDataBaseHelper.getInstance(getActivity()).getFavouriteStops());
+                    stops.clear();
+                    stops.addAll(currStops);
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            setEmptyLayoutVisibility();
+                            if (adapter == null) {
+                                adapter = new FavouritesAdapter(stops, fragment);
+                                mRecycler.setAdapter(adapter);
+                            } else {
+                                adapter.notifyDataSetChanged();
+                            }
                         }
-                    }
-                });
+                    });
+                }catch (Exception ex){
+                    System.out.println(ex.getMessage());
+                }
             }
         }).start();
     }
