@@ -80,8 +80,8 @@ public class MainDataBaseHelper extends SQLiteOpenHelper {
 
     }
 
-    public String getDbPath(){
-        return DB_PATH+DB_NAME;
+    public String getDbPath() {
+        return DB_PATH + DB_NAME;
     }
 
     /**
@@ -188,11 +188,11 @@ public class MainDataBaseHelper extends SQLiteOpenHelper {
         }
     }
 
-    public Cursor getStopsCursor(String routeId){
-        boolean isTimes = PreferenceManager.getDefaultSharedPreferences(myContext).getBoolean(myContext.getResources().getString(R.string.key_departure_time),true);
-        if(isTimes){
+    public Cursor getStopsCursor(String routeId) {
+        boolean isTimes = PreferenceManager.getDefaultSharedPreferences(myContext).getBoolean(myContext.getResources().getString(R.string.key_departure_time), true);
+        if (isTimes) {
             return getStopsCursorWithTimes(routeId);
-        }else{
+        } else {
             return getStopsCursorWithoutTimes(routeId);
         }
     }
@@ -204,15 +204,15 @@ public class MainDataBaseHelper extends SQLiteOpenHelper {
                 " join (SELECT max(stop_order), stops.name FROM routes JOIN stops ON routes.stop_id=stops.id WHERE routes.id = ?) lastStop\n" +
                 " WHERE routes.id = ? order by routes.id, stop_order";
         try {
-            return myDataBase.rawQuery(query, new String[]{routeId,routeId});
+            return myDataBase.rawQuery(query, new String[]{routeId, routeId});
         } catch (Exception ex) {
             System.out.println(ex.getMessage());
             return null;
         }
     }
 
-    public Cursor getStopsCursorWithTimes(String routeId){
-        String query="SELECT routes.rowid _id, bus_name, routes.id, stop_order, routes.stop_id,stops.name,  (routes.stop_id || ' ' || lastStop.name) in(" + SettingsDataBaseHelper.getInstance(myContext).getFavouritesString() + ") as favourite, lastStop.name as LAST_STOP, nextTime.hour, nextTime.minute   from buses_routes join routes on buses_routes.route_id=routes.id join stops on stops.id=routes.stop_id \n" +
+    public Cursor getStopsCursorWithTimes(String routeId) {
+        String query = "SELECT routes.rowid _id, bus_name, routes.id, stop_order, routes.stop_id,stops.name,  (routes.stop_id || ' ' || lastStop.name) in(" + SettingsDataBaseHelper.getInstance(myContext).getFavouritesString() + ") as favourite, lastStop.name as LAST_STOP, nextTime.hour, nextTime.minute   from buses_routes join routes on buses_routes.route_id=routes.id join stops on stops.id=routes.stop_id \n" +
                 " join (SELECT max(stop_order), stops.name FROM routes JOIN stops ON routes.stop_id=stops.id WHERE routes.id = @routeId) lastStop\n" +
                 " left outer join (  select time_tables.stop_id,type,hour,minute,(hour*60+minute) - (@hour*60+@minute) as diff,\n" +
                 "case when (hour*60+minute) - (@hour*60+@minute)>0 then (hour*60+minute) - (@hour*60+@minute) else 24*60-(@hour*60+@minute)+(hour*60+minute) end as diff_abs,\n" +
@@ -220,28 +220,28 @@ public class MainDataBaseHelper extends SQLiteOpenHelper {
                 " from time_tables join routes on time_tables.stop_id=routes.stop_id\n" +
                 " where  routes.id=@routeId and ((type= @todayType and diff>0)or (type=@tommorowType and diff<0))group by time_tables.stop_id ) nextTime on nextTime.stop_id=routes.stop_id\n" +
                 " WHERE routes.id = @routeId order by routes.id, stop_order";
-        int todayType=getDayType(0);
-        int tommorowType=getDayType(1);
-        int currentMinute=Calendar.getInstance().get(Calendar.MINUTE);
+        int todayType = getDayType(0);
+        int tommorowType = getDayType(1);
+        int currentMinute = Calendar.getInstance().get(Calendar.MINUTE);
         int currentHour = Calendar.getInstance().get(Calendar.HOUR_OF_DAY);
-        try{
-            return myDataBase.rawQuery(query,new String[]{routeId,String.valueOf(currentHour),String.valueOf(currentMinute),String.valueOf(todayType),String.valueOf(tommorowType)});
-        }catch (Exception ex){
+        try {
+            return myDataBase.rawQuery(query, new String[]{routeId, String.valueOf(currentHour), String.valueOf(currentMinute), String.valueOf(todayType), String.valueOf(tommorowType)});
+        } catch (Exception ex) {
             System.out.println(ex.getMessage());
             return null;
         }
     }
 
-    private int getDayType(int offset){
+    private int getDayType(int offset) {
         Calendar cal = Calendar.getInstance();
         int dayOfWeek = cal.get(Calendar.DAY_OF_WEEK);
-        dayOfWeek+=offset;
-        if(dayOfWeek==8)dayOfWeek=1;
-        if(dayOfWeek>=2 && dayOfWeek<=6){
+        dayOfWeek += offset;
+        if (dayOfWeek == 8) dayOfWeek = 1;
+        if (dayOfWeek >= 2 && dayOfWeek <= 6) {
             return 0;
-        }else if(dayOfWeek==7){
+        } else if (dayOfWeek == 7) {
             return 1;
-        }else{
+        } else {
             return 2;
         }
     }
@@ -285,6 +285,15 @@ public class MainDataBaseHelper extends SQLiteOpenHelper {
     }
 
     public Cursor getFavouriteStops() {
+        boolean isTimes = PreferenceManager.getDefaultSharedPreferences(myContext).getBoolean(myContext.getResources().getString(R.string.key_departure_time), true);
+        if (isTimes) {
+            return getFavouriteStopsWithTime();
+        } else {
+            return getFavouriteStopsWithoutTime();
+        }
+    }
+
+    public Cursor getFavouriteStopsWithoutTime() {
         String query = "SELECT  routes.id as _id, buses_routes.bus_name, \n" +
                 "stops.name as STOP, lastStops.name as FINAL_STOP, stops.id FROM stops join routes on stops.id=routes.stop_id join buses_routes on buses_routes.route_id=routes.id\n" +
                 "join\n" +
@@ -295,6 +304,31 @@ public class MainDataBaseHelper extends SQLiteOpenHelper {
         try {
             return myDataBase.rawQuery(query, null);
         } catch (Exception ex) {
+            System.out.println(ex.getMessage());
+            return null;
+        }
+    }
+
+    public Cursor getFavouriteStopsWithTime() {
+        String query = "SELECT  routes.id as _id, buses_routes.bus_name, \n" +
+                "stops.name as STOP, lastStops.name as FINAL_STOP, stops.id, nextTime.hour, nextTime.minute FROM stops join routes on stops.id=routes.stop_id join buses_routes on buses_routes.route_id=routes.id\n" +
+                "join\n" +
+                "(SELECT bus_name, stops.name, stops.id, routes.id AS ROUTE_ID, max(routes.stop_order) FROM stops join routes on stops.id=routes.stop_id join buses_routes on buses_routes.route_id=routes.id group by routes.id) lastStops\n" +
+                "on routes.id=lastStops.ROUTE_ID\n" +
+                "left outer join(select time_tables.stop_id,type,hour,minute,(hour*60+minute) - (@hour*60+@minute) as diff,\n" +
+                "case when (hour*60+minute) - (@hour*60+@minute)>0 then (hour*60+minute) - (@hour*60+@minute) else 24*60-(@hour*60+@minute)+(hour*60+minute) end as diff_abs,\n" +
+                "min(case when (hour*60+minute) - (@hour*60+@minute)>0 then (hour*60+minute) - (@hour*60+@minute) else 24*60-(@hour*60+@minute)+(hour*60+minute) end) as minimum\n" +
+                "from time_tables \n" +
+                "where  ((type=@todayType and diff>0)or (type=@tommorowType and diff<0))group by time_tables.stop_id) nextTime on nextTime.stop_id=stops.id\n" +
+                "WHERE (stops.id || ' ' || FINAL_STOP) in (" +
+                SettingsDataBaseHelper.getInstance(myContext).getFavouritesString() + ")";
+        int hour = Calendar.getInstance().get(Calendar.HOUR_OF_DAY);
+        int minute = Calendar.getInstance().get(Calendar.MINUTE);
+        int todayType = getDayType(0);
+        int tommorowType = getDayType(1);
+        try {
+            return myDataBase.rawQuery(query, new String[]{String.valueOf(hour), String.valueOf(minute), String.valueOf(todayType), String.valueOf(tommorowType)});
+        }catch (Exception ex){
             System.out.println(ex.getMessage());
             return null;
         }

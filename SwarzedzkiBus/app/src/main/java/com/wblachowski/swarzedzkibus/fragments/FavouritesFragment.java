@@ -78,8 +78,10 @@ public class FavouritesFragment extends Fragment {
                 String busNr = cursor.getString(cursor.getColumnIndex("bus_name"));
                 String stopName = cursor.getString(cursor.getColumnIndex("STOP"));
                 String direction = cursor.getString(cursor.getColumnIndex("FINAL_STOP"));
-
                 Stop stop = new Stop(stopId, busNr, stopName, direction);
+                if(cursor.getColumnIndex("hour")>-1 && cursor.getColumnIndex("minute")>-1){
+                    stop=new Stop(stopId,busNr,stopName,direction,cursor.getString(cursor.getColumnIndex("hour")),cursor.getString(cursor.getColumnIndex("minute")));
+                }
                 stops.add(stop);
             } while (cursor.moveToNext());
         }
