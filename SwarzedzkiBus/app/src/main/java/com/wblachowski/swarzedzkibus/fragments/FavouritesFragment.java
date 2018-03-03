@@ -40,8 +40,24 @@ public class FavouritesFragment extends Fragment {
         mLayoutManager.setHeaderBottomOverlapMargin(0);
 
         refreshStopsList();
-
+        startRefreshThreadIfNeeded();
         return rootView;
+    }
+
+    private void startRefreshThreadIfNeeded(){
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                while(true){
+                    refreshStopsList();
+                    try {
+                        Thread.sleep(10*1000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }).start();
     }
 
     public void notifyStopsChanged() {
