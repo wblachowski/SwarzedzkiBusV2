@@ -26,7 +26,8 @@ public class FavouritesFragment extends Fragment {
     LinearLayout noFavouritesLayout;
     RecyclerView mRecycler;
     StickyHeaderGridLayoutManager mLayoutManager;
-    ArrayList<Stop> stops;
+    ArrayList<Stop> stops = new ArrayList<>();
+    FavouritesAdapter adapter;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -38,7 +39,8 @@ public class FavouritesFragment extends Fragment {
         mRecycler = (RecyclerView) rootView.findViewById(R.id.recycler_favourites);
         mLayoutManager = new StickyHeaderGridLayoutManager(1);
         mLayoutManager.setHeaderBottomOverlapMargin(0);
-
+        mRecycler.setLayoutManager(mLayoutManager);
+        adapter=null;
         refreshStopsList();
         startRefreshThreadIfNeeded();
         return rootView;
@@ -69,13 +71,19 @@ public class FavouritesFragment extends Fragment {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                stops = parseCursorToStops(MainDataBaseHelper.getInstance(getActivity()).getFavouriteStops());
+                ArrayList<Stop> currStops = parseCursorToStops(MainDataBaseHelper.getInstance(getActivity()).getFavouriteStops());
+                stops.clear();
+                stops.addAll(currStops);
                 getActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
                         setEmptyLayoutVisibility();
-                        mRecycler.setLayoutManager(mLayoutManager);
-                        mRecycler.setAdapter(new FavouritesAdapter(stops, fragment));
+                        if(adapter==null){
+                            adapter = new FavouritesAdapter(stops,fragment);
+                            mRecycler.setAdapter(adapter);
+                        }else{
+                            adapter.notifyDataSetChanged();
+                        }
                     }
                 });
             }
