@@ -55,7 +55,7 @@ public class FavouritesFragment extends Fragment {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                while(true){
+                while(isVisible()){
                     refreshStopsList(true);
                     try {
                         Thread.sleep(10*1000);

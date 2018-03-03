@@ -18,6 +18,7 @@ public class StopsActivity extends AppCompatActivity {
     StopsCursorAdapter cursorAdapter;
     Cursor cursor;
     ListView listView;
+    static boolean isActive = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,7 +38,7 @@ public class StopsActivity extends AppCompatActivity {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                while(true) {
+                while(isActive) {
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
@@ -74,5 +75,17 @@ public class StopsActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         finish();
         return true;
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        isActive = true;
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        isActive = false;
     }
 }

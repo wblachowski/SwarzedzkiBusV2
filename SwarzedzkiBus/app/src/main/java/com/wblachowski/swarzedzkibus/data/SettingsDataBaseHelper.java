@@ -80,23 +80,25 @@ public class SettingsDataBaseHelper extends SQLiteOpenHelper {
         return lastModified.toString();
     }
 
-    public void insertIntoFavourites(String stopId, String direction) {
+    public boolean insertIntoFavourites(String stopId, String direction) {
         try {
             String query = "INSERT INTO favourites(stop_id, direction) VALUES(?,?)";
             myDataBase.execSQL(query, new String[]{stopId, direction});
+            return true;
         } catch (Exception ex) {
             //this stop is already in favourites
-            return;
+            return false;
         }
     }
 
-    public void deleteFromFavourites(String stopId, String direction) {
+    public boolean deleteFromFavourites(String stopId, String direction) {
         try {
             String query = "DELETE FROM favourites WHERE stop_id = ? AND direction = ?";
             myDataBase.execSQL(query, new String[]{stopId, direction});
+            return true;
         } catch (Exception ex) {
             //log info
-            return;
+            return false;
         }
     }
 
@@ -144,6 +146,16 @@ public class SettingsDataBaseHelper extends SQLiteOpenHelper {
             myDataBase.execSQL(query, new String[]{time});
         } catch (Exception ex) {
 
+        }
+    }
+
+    public boolean isStopFavourite(String stopId, String direction){
+        String query="SELECT * FROM favourites WHERE stop_id=? AND direction=?";
+        try{
+            Cursor cursor = myDataBase.rawQuery(query,new String[]{stopId,direction});
+            return cursor.getCount()>0;
+        }catch(Exception ex){
+            return false;
         }
     }
 

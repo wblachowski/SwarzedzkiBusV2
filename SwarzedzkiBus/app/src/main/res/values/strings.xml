@@ -11,6 +11,7 @@
     <string name="about_title">Informacje o aplikacji</string>
     <string name="about_close">ZAMKNIJ</string>
     <string name="action_favourite">Dodaj do ulubionych</string>
+    <string name="action_unfavourite">Usuń z ulubionych</string>
     <string name="favourite_remove">Usuń z ulubionych</string>
 
     <string name="update_available_title">Aktualizacja rozkładu dostępna</string>
