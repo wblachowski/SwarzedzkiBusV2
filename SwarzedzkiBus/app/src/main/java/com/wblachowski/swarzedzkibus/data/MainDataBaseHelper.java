@@ -197,7 +197,7 @@ public class MainDataBaseHelper extends SQLiteOpenHelper {
         }
     }
 
-    public Cursor getStopsCursorWithoutTimes(String routeId) {
+    private Cursor getStopsCursorWithoutTimes(String routeId) {
         String query = "SELECT routes.rowid _id, bus_name, routes.id, stop_order, stop_id,stops.name, " +
                 " (stop_id || ' ' || lastStop.name) in(" + SettingsDataBaseHelper.getInstance(myContext).getFavouritesString() + ") as favourite, lastStop.name as LAST_STOP  " +
                 " from buses_routes join routes on buses_routes.route_id=routes.id join stops on stops.id=stop_id \n" +
@@ -211,7 +211,7 @@ public class MainDataBaseHelper extends SQLiteOpenHelper {
         }
     }
 
-    public Cursor getStopsCursorWithTimes(String routeId) {
+    private Cursor getStopsCursorWithTimes(String routeId) {
         String query = "SELECT routes.rowid _id, bus_name, routes.id, stop_order, routes.stop_id,stops.name,  (routes.stop_id || ' ' || lastStop.name) in(" + SettingsDataBaseHelper.getInstance(myContext).getFavouritesString() + ") as favourite, lastStop.name as LAST_STOP, nextTime.hour, nextTime.minute   from buses_routes join routes on buses_routes.route_id=routes.id join stops on stops.id=routes.stop_id \n" +
                 " join (SELECT max(stop_order), stops.name FROM routes JOIN stops ON routes.stop_id=stops.id WHERE routes.id = @routeId) lastStop\n" +
                 " left outer join (  select time_tables.stop_id,type,hour,minute,(hour*60+minute) - (@hour*60+@minute) as diff,\n" +
@@ -266,7 +266,16 @@ public class MainDataBaseHelper extends SQLiteOpenHelper {
         }
     }
 
-    public Cursor getStopsByName(String name) {
+    public Cursor getStopsByName(String name){
+        boolean isTimes = PreferenceManager.getDefaultSharedPreferences(myContext).getBoolean(myContext.getResources().getString(R.string.key_departure_time), true);
+        if (isTimes) {
+            return getStopsByNameWithTime(name);
+        } else {
+            return getStopsByNameWithoutTime(name);
+        }
+    }
+
+    private Cursor getStopsByNameWithoutTime(String name) {
         String query = "SELECT  routes.id as _id, buses_routes.bus_name, \n" +
                 "stops.name as STOP, \n" +
                 "replace(replace(replace(replace(replace(replace(replace(replace(replace(lower(stops.name),'ą','a'),'ć','c'),'ę','e'),'ł','l'),'ń','n'),'ó','o'),'ś','s'),'ź','z'),'ż','z') as STOP_ASCII,\n" +
@@ -284,6 +293,33 @@ public class MainDataBaseHelper extends SQLiteOpenHelper {
         }
     }
 
+    private Cursor getStopsByNameWithTime(String name) {
+        String query =" SELECT  routes.id as _id, buses_routes.bus_name, \n" +
+                "stops.name as STOP, \n" +
+                "replace(replace(replace(replace(replace(replace(replace(replace(replace(lower(stops.name),'ą','a'),'ć','c'),'ę','e'),'ł','l'),'ń','n'),'ó','o'),'ś','s'),'ź','z'),'ż','z') as STOP_ASCII,\n" +
+                "lastStops.name as FINAL_STOP, stops.id, nextTime.hour, nextTime.minute FROM stops join routes on stops.id=routes.stop_id join buses_routes on buses_routes.route_id=routes.id\n" +
+                "join\n" +
+                "(SELECT bus_name, stops.name, stops.id, routes.id AS ROUTE_ID, max(routes.stop_order) FROM stops join routes on stops.id=routes.stop_id join buses_routes on buses_routes.route_id=routes.id group by routes.id) lastStops\n" +
+                "on routes.id=lastStops.ROUTE_ID\n" +
+                "left outer join(select time_tables.stop_id,type,hour,minute,(hour*60+minute) - (@hour*60+@minute) as diff,\n" +
+                "case when (hour*60+minute) - (@hour*60+@minute)>0 then (hour*60+minute) - (@hour*60+@minute) else 24*60-(@hour*60+@minute)+(hour*60+minute) end as diff_abs,\n" +
+                "min(case when (hour*60+minute) - (@hour*60+@minute)>0 then (hour*60+minute) - (@hour*60+@minute) else 24*60-(@hour*60+@minute)+(hour*60+minute) end) as minimum\n" +
+                "from time_tables \n" +
+                "where  ((type= @todayType and diff>0)or (type=@tommorowType and diff<0))group by time_tables.stop_id) nextTime on nextTime.stop_id=stops.id\n" +
+                "where\n" +
+                "stop_ASCII like '%' || replace(replace(replace(replace(replace(replace(replace(replace(replace(lower(@name),'ą','a'),'ć','c'),'ę','e'),'ł','l'),'ń','n'),'ó','o'),'ś','s'),'ź','z'),'ż','z') || '%'";
+        int hour = Calendar.getInstance().get(Calendar.HOUR_OF_DAY);
+        int minute = Calendar.getInstance().get(Calendar.MINUTE);
+        int todayType = getDayType(0);
+        int tommorowType = getDayType(1);
+        try {
+            return myDataBase.rawQuery(query, new String[]{String.valueOf(hour), String.valueOf(minute), String.valueOf(todayType), String.valueOf(tommorowType),name});
+        } catch (Exception ex) {
+            System.out.print(ex.getMessage());
+            return null;
+        }
+    }
+
     public Cursor getFavouriteStops() {
         boolean isTimes = PreferenceManager.getDefaultSharedPreferences(myContext).getBoolean(myContext.getResources().getString(R.string.key_departure_time), true);
         if (isTimes) {
@@ -293,7 +329,7 @@ public class MainDataBaseHelper extends SQLiteOpenHelper {
         }
     }
 
-    public Cursor getFavouriteStopsWithoutTime() {
+    private Cursor getFavouriteStopsWithoutTime() {
         String query = "SELECT  routes.id as _id, buses_routes.bus_name, \n" +
                 "stops.name as STOP, lastStops.name as FINAL_STOP, stops.id FROM stops join routes on stops.id=routes.stop_id join buses_routes on buses_routes.route_id=routes.id\n" +
                 "join\n" +
@@ -309,7 +345,7 @@ public class MainDataBaseHelper extends SQLiteOpenHelper {
         }
     }
 
-    public Cursor getFavouriteStopsWithTime() {
+    private Cursor getFavouriteStopsWithTime() {
         String query = "SELECT  routes.id as _id, buses_routes.bus_name, \n" +
                 "stops.name as STOP, lastStops.name as FINAL_STOP, stops.id, nextTime.hour, nextTime.minute FROM stops join routes on stops.id=routes.stop_id join buses_routes on buses_routes.route_id=routes.id\n" +
                 "join\n" +

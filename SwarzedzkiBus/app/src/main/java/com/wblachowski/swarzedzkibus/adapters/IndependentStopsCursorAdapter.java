@@ -30,8 +30,18 @@ public class IndependentStopsCursorAdapter extends CursorAdapter {
         String bus = cursor.getString(cursor.getColumnIndex("bus_name"));
         String stopName = cursor.getString(cursor.getColumnIndex("STOP"));
         String destination = cursor.getString(cursor.getColumnIndex("FINAL_STOP"));
-        ((TextView)view.findViewById(R.id.independent_bus_nr)).setText(bus);
-        ((TextView)view.findViewById(R.id.independent_bus_stop)).setText(stopName);
-        ((TextView)view.findViewById(R.id.independent_bus_to)).setText(destination);
+        ((TextView) view.findViewById(R.id.independent_bus_nr)).setText(bus);
+        ((TextView) view.findViewById(R.id.independent_bus_stop)).setText(stopName);
+        ((TextView) view.findViewById(R.id.independent_bus_to)).setText(destination);
+
+        String timeFull = "";
+        if (cursor.getColumnIndex("hour") > -1 && cursor.getColumnIndex("minute") > -1) {
+            String hour = cursor.getString(cursor.getColumnIndex("hour"));
+            String minute = cursor.getString(cursor.getColumnIndex("minute"));
+            if (hour != null && minute != null) {
+                timeFull = hour + ":" + (minute.length() > 1 ? minute : "0" + minute);
+            }
+        }
+        ((TextView) view.findViewById(R.id.independent_bus_time)).setText(timeFull);
     }
 }
