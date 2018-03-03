@@ -136,6 +136,17 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    @Override
+    protected void onResume()
+    {
+        super.onResume();
+        if(mViewPager.getCurrentItem()==0) {
+            if(favouritesFragment!=null){
+                favouritesFragment.refreshStopsList(false);
+            }
+        }
+    }
+
     public MainDataBaseHelper getDataBaseHelper() {
         return myDbHelper;
     }
@@ -182,9 +193,10 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void showSettingsActivity() {
-        try{
-        Intent intent = new Intent(this,SettingsActivity.class);
-        startActivity(intent);}catch (Exception ex){
+        try {
+            Intent intent = new Intent(this, SettingsActivity.class);
+            startActivity(intent);
+        } catch (Exception ex) {
             System.out.println(ex.getMessage());
         }
     }
@@ -222,8 +234,8 @@ public class MainActivity extends AppCompatActivity {
 
     private void checkForUpdates() {
         SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
-        boolean val = pref.getBoolean(getString(R.string.key_auto_update),true);
-        if(!val)return;
+        boolean val = pref.getBoolean(getString(R.string.key_auto_update), true);
+        if (!val) return;
 
         new Thread(new Runnable() {
             @Override

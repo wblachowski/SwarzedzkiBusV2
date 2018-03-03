@@ -15,9 +15,9 @@
 
     <string name="update_available_title">Aktualizacja rozkładu dostępna</string>
     <string name="update_available_msg">Czy chesz pobrać nowy rozkład jazdy?</string>
-    <string name="title_activity_settings">Settings</string>
 
     <!-- Strings related to Settings -->
+    <string name="settings_activity_title">Ustawienia</string>
     <string name="pref_title_main_category">Ogólne</string>
 
     <string name="pref_title_auto_update">Automatyczne aktualizacje</string>
