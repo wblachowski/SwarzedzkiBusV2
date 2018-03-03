@@ -108,8 +108,7 @@ public class MainDataBaseHelper extends SQLiteOpenHelper {
             checkDB.close();
 
         }
-
-        return checkDB != null ? true : false;
+        return checkDB != null;
     }
 
     /**
@@ -139,7 +138,6 @@ public class MainDataBaseHelper extends SQLiteOpenHelper {
         myOutput.flush();
         myOutput.close();
         myInput.close();
-
     }
 
     public void openDataBase() throws SQLException {
