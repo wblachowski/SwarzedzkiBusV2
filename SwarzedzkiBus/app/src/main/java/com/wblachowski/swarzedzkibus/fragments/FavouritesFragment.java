@@ -49,7 +49,7 @@ public class FavouritesFragment extends Fragment {
             adapter = null;
             dataBaseHelper=MainDataBaseHelper.getInstance(getActivity());
             refreshStopsList(false);
-            startRefreshThreadIfNeeded();
+            //startRefreshThreadIfNeeded();
         } catch (Exception ex) {
             System.out.print(ex.getMessage());
         }
@@ -57,10 +57,12 @@ public class FavouritesFragment extends Fragment {
     }
 
     Timer timer;
-    private void startRefreshThreadIfNeeded() {
+    public void startRefreshThreadIfNeeded() {
         SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(getActivity());
         boolean val = pref.getBoolean(getString(R.string.key_departure_time), true);
         if (!val) return;
+
+        if(timer!=null)timer.cancel();
 
         timer = new Timer();
         timer.scheduleAtFixedRate(new TimerTask() {

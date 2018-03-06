@@ -11,6 +11,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.wblachowski.swarzedzkibus.R;
 import com.wblachowski.swarzedzkibus.data.SettingsDataBaseHelper;
@@ -105,7 +106,7 @@ public class TimeTableActivity extends AppCompatActivity {
 
         MenuItem menuItem = menu.findItem(R.id.action_favourite);
         menuItem.setTitle(isFavourite ? getString(R.string.action_unfavourite) : getString(R.string.action_favourite));
-
+        menuItem.setIcon(isFavourite ? getDrawable(R.drawable.ic_star_black_24dp) : getDrawable(R.drawable.ic_star_border_black_24dp));
         return true;
     }
 
@@ -119,7 +120,7 @@ public class TimeTableActivity extends AppCompatActivity {
         int id = item.getItemId();
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_favourite) {
-            boolean successful;/*
+            boolean successful;
             if (isFavourite) {
                 successful = dataBaseHelper.deleteFromFavourites(this.id, direction);
                 if (successful) isFavourite = false;
@@ -128,11 +129,12 @@ public class TimeTableActivity extends AppCompatActivity {
                 if (successful) isFavourite = true;
             }
             if (successful) {
+                item.setIcon(isFavourite? getDrawable(R.drawable.ic_star_black_24dp) : getDrawable(R.drawable.ic_star_border_black_24dp));
                 item.setTitle(isFavourite ? getString(R.string.action_unfavourite) : getString(R.string.action_favourite));
                 Toast.makeText(this, isFavourite ? "Dodano do ulubionych" : "Usunięto z ulubionych",
                         Toast.LENGTH_LONG).show();
-            }*/
-                successful = dataBaseHelper.deleteFromFavourites(this.id, direction);
+            }
+                //successful = dataBaseHelper.deleteFromFavourites(this.id, direction);
                 //successful = dataBaseHelper.insertIntoFavourites(this.id, direction);
 
 

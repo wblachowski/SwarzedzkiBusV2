@@ -146,6 +146,7 @@ public class MainActivity extends AppCompatActivity {
         try{
         if(mViewPager.getCurrentItem()==0) {
             if(favouritesFragment!=null){
+                //favouritesFragment.startRefreshThreadIfNeeded();
                 favouritesFragment.refreshStopsList(false);
             }
         }}catch (Exception ex){
