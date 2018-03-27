@@ -76,8 +76,7 @@ public class FavouritesAdapter extends StickyHeaderGridAdapter {
             holder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    //final int offset = getItemSectionOffset(section, holder.getAdapterPosition());
-                    final int offset = position;
+                    final int offset = getItemSectionOffset(section, holder.getAdapterPosition());
                     if(offset>stops.size() || offset<0){
                         return;
                     }
@@ -99,8 +98,7 @@ public class FavouritesAdapter extends StickyHeaderGridAdapter {
                     menu.add(v.getResources().getString(R.string.favourite_remove)).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
                         @Override
                         public boolean onMenuItemClick(MenuItem item) {
-                            //final int offset = getItemSectionOffset(section, holder.getAdapterPosition());
-                            final int offset=position;
+                            final int offset = getItemSectionOffset(section, holder.getAdapterPosition());
                             if(offset>=stops.size() || offset<0){
                                 return true;
                             }
