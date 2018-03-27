@@ -95,7 +95,11 @@ public class FavouritesAdapter extends StickyHeaderGridAdapter {
                     menu.add(v.getResources().getString(R.string.favourite_remove)).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
                         @Override
                         public boolean onMenuItemClick(MenuItem item) {
-                            final int offset = holder.getPosition()-1;
+                            //final int offset = getItemSectionOffset(section, holder.getAdapterPosition());
+                            final int offset=position;
+                            if(offset>=stops.size()){
+                                return true;
+                            }
                             final String id = stops.get(offset).getId();
                             final String direction = stops.get(offset).getDirection();
                             stops.remove(offset);
