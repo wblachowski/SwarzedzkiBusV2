@@ -96,7 +96,9 @@ public class MainActivity extends AppCompatActivity {
                     favouritesFragment.refreshStopsList(false);
                 }
                 InputMethodManager imm = (InputMethodManager)getSystemService(INPUT_METHOD_SERVICE);
-                imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
+                if(getCurrentFocus()!=null) {
+                    imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
+                }
             }
 
             @Override
