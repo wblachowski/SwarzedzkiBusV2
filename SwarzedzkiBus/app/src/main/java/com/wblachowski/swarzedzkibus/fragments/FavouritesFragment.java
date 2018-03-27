@@ -49,7 +49,7 @@ public class FavouritesFragment extends Fragment {
             adapter = null;
             dataBaseHelper=MainDataBaseHelper.getInstance(getActivity());
             refreshStopsList(false);
-            //startRefreshThreadIfNeeded();
+            startRefreshThreadIfNeeded();
         } catch (Exception ex) {
             System.out.print(ex.getMessage());
         }
@@ -70,45 +70,50 @@ public class FavouritesFragment extends Fragment {
             public void run() {
                 refreshStopsList(true);
             }
-        }, 10 * 1000, 10 * 1000);
+        },  1000,  1000);
     }
 
     public void notifyStopsChanged() {
         setEmptyLayoutVisibility();
     }
 
-    public void refreshStopsList(final boolean repeated) {
+    public synchronized void refreshStopsList(final boolean repeated) {
         final FavouritesFragment fragment = this;
         new Thread(new Runnable() {
             @Override
             public void run() {
-                try {
-                    ArrayList<Stop> currStops = parseCursorToStops(dataBaseHelper.getFavouriteStops());
-                    if (stops == null) stops = new ArrayList<Stop>();
-                    stops.clear();
-                    stops.addAll(currStops);
-                    if(getActivity()==null)return;
-                    getActivity().runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            try {
-                                setEmptyLayoutVisibility();
-                                if (repeated && adapter!=null) {
-                                    adapter.notifyDataSetChanged();
-                                } else {
-                                    adapter = new FavouritesAdapter(stops, fragment);
-                                    mRecycler.setAdapter(adapter);
-                                }
-                            } catch (Exception ex) {
-                                System.out.println(ex.getMessage());
-                            }
-                        }
-                    });
-                } catch (Exception ex) {
-                    System.out.println(ex.getMessage());
-                }
+                refresh(repeated);
             }
         }).start();
+    }
+
+    private synchronized void refresh(final boolean repeated){
+        final FavouritesFragment fragment = this;
+        try {
+            ArrayList<Stop> currStops = parseCursorToStops(dataBaseHelper.getFavouriteStops());
+            if (stops == null) stops = new ArrayList<Stop>();
+            stops.clear();
+            stops.addAll(currStops);
+            if(getActivity()==null)return;
+            getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        setEmptyLayoutVisibility();
+                        if (repeated && adapter!=null) {
+                            adapter.notifyDataSetChanged();
+                        } else {
+                            adapter = new FavouritesAdapter(stops, fragment);
+                            mRecycler.setAdapter(adapter);
+                        }
+                    } catch (Exception ex) {
+                        System.out.println(ex.getMessage());
+                    }
+                }
+            });
+        } catch (Exception ex) {
+            System.out.println(ex.getMessage());
+        }
     }
 
     private void setEmptyLayoutVisibility() {

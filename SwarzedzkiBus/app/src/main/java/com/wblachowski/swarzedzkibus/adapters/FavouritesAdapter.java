@@ -27,7 +27,7 @@ public class FavouritesAdapter extends StickyHeaderGridAdapter {
     private FavouritesFragment fragment;
 
     public FavouritesAdapter(ArrayList<Stop> stops, FavouritesFragment fragment) {
-        this.stops = stops;
+        this.stops = new ArrayList<Stop>(stops);
         this.fragment = fragment;
     }
 
@@ -61,56 +61,60 @@ public class FavouritesAdapter extends StickyHeaderGridAdapter {
 
     @Override
     public void onBindItemViewHolder(ItemViewHolder viewHolder, final int section, final int position) {
-        final MyItemViewHolder holder = (MyItemViewHolder) viewHolder;
-        Stop stop = stops.get(position);
-        holder.nrView.setText(stop.getBusNr());
-        holder.stopView.setText(stop.getName());
-        holder.directionView.setText(stop.getDirection());
-        String timeFull="";
-        if(stop.getNextHour()!= null && stop.getNextMinute()!=null){
-            timeFull=stop.getNextHour() + ":" + (stop.getNextMinute().length()>1 ? stop.getNextMinute() : "0" + stop.getNextMinute());
+        try {
+            final MyItemViewHolder holder = (MyItemViewHolder) viewHolder;
+            Stop stop = stops.get(position);
+            holder.nrView.setText(stop.getBusNr());
+            holder.stopView.setText(stop.getName());
+            holder.directionView.setText(stop.getDirection());
+            String timeFull = "";
+            if (stop.getNextHour() != null && stop.getNextMinute() != null) {
+                timeFull = stop.getNextHour() + ":" + (stop.getNextMinute().length() > 1 ? stop.getNextMinute() : "0" + stop.getNextMinute());
+            }
+            holder.timeView.setText(timeFull);
+
+            holder.itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    final int offset = getItemSectionOffset(section, holder.getAdapterPosition());
+                    final Stop stop = stops.get(offset);
+
+                    Intent intent = new Intent(v.getContext(), TimeTableActivity.class);
+                    intent.putExtra("nr", stop.getBusNr());
+                    intent.putExtra("id", stop.getId());
+                    intent.putExtra("stopName", stop.getName());
+                    intent.putExtra("direction", stop.getDirection());
+
+                    v.getContext().startActivity(intent);
+                }
+            });
+
+            holder.itemView.setOnCreateContextMenuListener(new View.OnCreateContextMenuListener() {
+                @Override
+                public void onCreateContextMenu(ContextMenu menu, final View v, ContextMenu.ContextMenuInfo menuInfo) {
+                    menu.add(v.getResources().getString(R.string.favourite_remove)).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+                        @Override
+                        public boolean onMenuItemClick(MenuItem item) {
+                            final int offset = getItemSectionOffset(section, holder.getAdapterPosition());
+                            final String id = stops.get(offset).getId();
+                            final String direction = stops.get(offset).getDirection();
+                            stops.remove(offset);
+                            notifySectionItemRemoved(0, offset);
+                            fragment.notifyStopsChanged();
+                            new Thread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    SettingsDataBaseHelper.getInstance(v.getContext()).deleteFromFavourites(id, direction);
+                                }
+                            }).start();
+                            return true;
+                        }
+                    });
+                }
+            });
+        }catch (Exception ex){
+            System.out.println(ex.getMessage());
         }
-        holder.timeView.setText(timeFull);
-
-        holder.itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                final int offset = getItemSectionOffset(section, holder.getAdapterPosition());
-                final Stop stop = stops.get(offset);
-
-                Intent intent = new Intent(v.getContext(), TimeTableActivity.class);
-                intent.putExtra("nr", stop.getBusNr());
-                intent.putExtra("id", stop.getId());
-                intent.putExtra("stopName", stop.getName());
-                intent.putExtra("direction", stop.getDirection());
-
-                v.getContext().startActivity(intent);
-            }
-        });
-
-        holder.itemView.setOnCreateContextMenuListener(new View.OnCreateContextMenuListener() {
-            @Override
-            public void onCreateContextMenu(ContextMenu menu, final View v, ContextMenu.ContextMenuInfo menuInfo) {
-                menu.add(v.getResources().getString(R.string.favourite_remove)).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
-                    @Override
-                    public boolean onMenuItemClick(MenuItem item) {
-                        final int offset = getItemSectionOffset(section, holder.getAdapterPosition());
-                        final String id = stops.get(offset).getId();
-                        final String direction = stops.get(offset).getDirection();
-                        stops.remove(offset);
-                        notifySectionItemRemoved(0, offset);
-                        fragment.notifyStopsChanged();
-                        new Thread(new Runnable() {
-                            @Override
-                            public void run() {
-                                SettingsDataBaseHelper.getInstance(v.getContext()).deleteFromFavourites(id, direction);
-                            }
-                        }).start();
-                        return true;
-                    }
-                });
-            }
-        });
     }
 
     public static class MyItemViewHolder extends ItemViewHolder {

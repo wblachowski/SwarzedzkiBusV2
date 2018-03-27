@@ -146,8 +146,8 @@ public class MainActivity extends AppCompatActivity {
         try{
         if(mViewPager.getCurrentItem()==0) {
             if(favouritesFragment!=null){
-                //favouritesFragment.startRefreshThreadIfNeeded();
                 favouritesFragment.refreshStopsList(false);
+                favouritesFragment.startRefreshThreadIfNeeded();
             }
         }}catch (Exception ex){
             System.out.println(ex.getMessage());

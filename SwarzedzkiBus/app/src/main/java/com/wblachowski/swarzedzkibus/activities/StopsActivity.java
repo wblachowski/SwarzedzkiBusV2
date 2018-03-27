@@ -25,8 +25,8 @@ public class StopsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_stops);
 
-        final String nr=getIntent().getStringExtra("nr").toString();
-        final String routeId=getIntent().getStringExtra("routeId").toString();
+        final String nr=getIntent().getStringExtra("nr");
+        final String routeId=getIntent().getStringExtra("routeId");
         setTitle("Linia " + nr);
 
         cursor = MainDataBaseHelper.getInstance(this).getStopsCursor(routeId);
@@ -69,6 +69,12 @@ public class StopsActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+    }
+
+    @Override
+    protected void onResume(){
+        super.onResume();
+        cursorAdapter.swapCursor(MainDataBaseHelper.getInstance(this).getStopsCursor(getIntent().getStringExtra("routeId")));
     }
 
     @Override
