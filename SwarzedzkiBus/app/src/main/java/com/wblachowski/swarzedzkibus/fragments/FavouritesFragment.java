@@ -100,12 +100,8 @@ public class FavouritesFragment extends Fragment {
                 public void run() {
                     try {
                         setEmptyLayoutVisibility();
-                        if (repeated && adapter!=null) {
-                            adapter.notifyDataSetChanged();
-                        } else {
-                            adapter = new FavouritesAdapter(stops, fragment);
-                            mRecycler.setAdapter(adapter);
-                        }
+                        adapter = new FavouritesAdapter(stops, fragment);
+                        mRecycler.setAdapter(adapter);
                     } catch (Exception ex) {
                         System.out.println(ex.getMessage());
                     }
