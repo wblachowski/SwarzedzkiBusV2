@@ -64,7 +64,7 @@ public class FavouritesFragment extends Fragment {
 
         if(timer!=null)timer.cancel();
 
-        timer = new Timer();
+        timer = new Timer(true);
         long delay = 60*1000 - System.currentTimeMillis()%(60*1000);
         timer.scheduleAtFixedRate(new TimerTask() {
             @Override
