@@ -14,6 +14,7 @@ public class DataBaseManager {
 
     public void createNewDatabase() {
         loadProperties();
+        new File(filename).delete();
         url = "jdbc:sqlite:" + filename;
         try (Connection conn = DriverManager.getConnection(url)) {
             if (conn != null) {
