@@ -280,7 +280,7 @@ public class DataBaseManager {
     }
 
     private String resolveStopName(String stopUrl) {
-        return stopUrl.substring(stopUrl.lastIndexOf("/") + 1, stopUrl.length());
+        return stopUrl.substring(stopUrl.lastIndexOf("/") + 1);
     }
 
     private void loadProperties() {
