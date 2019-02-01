@@ -7,11 +7,10 @@ import org.apache.pdfbox.text.PDFTextStripperByArea;
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
-import java.text.Annotation;
 import java.util.ArrayList;
 import java.util.regex.Pattern;
 
-public class PDFmanager {
+public class PdfManager {
 
     String column1;
     String column2;
@@ -53,9 +52,9 @@ public class PDFmanager {
     }
 
     private void prepareColumns() {
-        column1 = column1.replace("'", "").replace("#ADR!","");
-        column2 = column2.replace("'", "").replace("#ADR!","");
-        column3 = column3.replace("'", "").replace("#ADR!","");
+        column1 = column1.replace("'", "").replace("#ADR!", "");
+        column2 = column2.replace("'", "").replace("#ADR!", "");
+        column3 = column3.replace("'", "").replace("#ADR!", "");
     }
 
     private boolean hasRemarks(String text) {

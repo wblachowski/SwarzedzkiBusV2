@@ -1,14 +1,8 @@
 package com.busparser;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.pdfbox.pdfparser.PDFParser;
-import org.apache.pdfbox.pdmodel.PDDocument;
-import org.apache.pdfbox.pdmodel.PDPage;
-import org.apache.pdfbox.text.PDFTextStripperByArea;
 
-import java.awt.*;
 import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
@@ -18,8 +12,6 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.Map;
 import java.util.Properties;
-import java.util.Scanner;
-import java.util.regex.Pattern;
 
 public class BusParser {
 
@@ -29,7 +21,7 @@ public class BusParser {
     String dbTimeFile;
     WebParser webParser;
     FileManager fileManager;
-    PDFmanager pdfManager;
+    PdfManager pdfManager;
     DataBaseManager dataBaseManager;
 
     public static void main(String[] args) {
@@ -41,8 +33,8 @@ public class BusParser {
             initialize();
             Map<String, String> linksToBuses = webParser.retrieveLinks(urlToBuses, ".*lista.htm");
             for (Map.Entry<String, String> entry : linksToBuses.entrySet()) {
-                Map<String, String> linksLeftStops = webParser.retrieveLeftLinks(entry.getKey(), ".*\\.pdf");
-                Map<String, String> linksRightStops = webParser.retrieveRightLinks(entry.getKey(), ".*\\.pdf");
+                Map<String, String> linksLeftStops = webParser.retrieveLeftLinks(entry.getKey());
+                Map<String, String> linksRightStops = webParser.retrieveRightLinks(entry.getKey());
                 String busName = webParser.getBusName(entry.getKey());
                 dataBaseManager.insertBus(busName);
                 for (Map.Entry<String, String> stopEntry : linksLeftStops.entrySet()) {
@@ -72,7 +64,7 @@ public class BusParser {
         loadProperties();
         webParser = new WebParser();
         fileManager = new FileManager();
-        pdfManager = new PDFmanager();
+        pdfManager = new PdfManager();
         dataBaseManager = new DataBaseManager();
         dataBaseManager.createNewDatabase();
     }

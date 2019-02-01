@@ -75,7 +75,7 @@ public class DataBaseManager {
         }
     }
 
-    public void setFinishTime(){
+    public void setFinishTime() {
         Long time = System.currentTimeMillis();
         try (Writer writer = new BufferedWriter(new OutputStreamWriter(
                 new FileOutputStream(filenameTime), "utf-8"))) {
@@ -102,10 +102,10 @@ public class DataBaseManager {
         }
     }
 
-    public void insertRemarks(String urlStop, ArrayList<PDFmanager.Remark> remarks) {
+    public void insertRemarks(String urlStop, ArrayList<PdfManager.Remark> remarks) {
         String stopId = resolveStopName(urlStop);
         String sql = "INSERT INTO remarks(stop_id,symbol,description) VALUES(?,?,?)";
-        for (PDFmanager.Remark remark : remarks) {
+        for (PdfManager.Remark remark : remarks) {
             try (Connection conn = DriverManager.getConnection(url);
                  PreparedStatement pstmt = conn.prepareStatement(sql)) {
                 pstmt.setString(1, stopId);
@@ -155,7 +155,7 @@ public class DataBaseManager {
     }
 
     private void insertTimeRemark(String remark) {
-        if(remark.toUpperCase().contains("KURSUJE") || remark.toUpperCase().contains("NIE"))return;
+        if (remark.toUpperCase().contains("KURSUJE") || remark.toUpperCase().contains("NIE")) return;
         String sql = "UPDATE time_tables SET remark=COALESCE(remark, '') || ? || ' ' WHERE id=(SELECT MAX(id) FROM time_tables)";
         try (Connection conn = DriverManager.getConnection(url);
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
