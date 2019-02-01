@@ -39,12 +39,14 @@ public class WebParser {
         Elements rows = doc.select("tr");
         for (Element row : rows) {
             Elements cells = row.select("td");
-            cells.removeIf(cell -> Integer.parseInt(cell.attr("width").replace("%", "")) < 30);
-            Elements links = cells.get(column).select("a");
-            links.removeIf(link -> !link.attr("href").contains(".pdf"));
-            for (Element link : links) {
-                if (!link.text().isEmpty()) {
-                    linksMap.put(getFullLink(url, link.attr("href")), link.text());
+            cells.removeIf(cell -> !hasCorrectWidth(cell));
+            if (cells.size() > column) {
+                Elements links = cells.get(column).select("a");
+                links.removeIf(link -> !link.attr("href").contains(".pdf"));
+                for (Element link : links) {
+                    if (!link.text().isEmpty()) {
+                        linksMap.put(getFullLink(url, link.attr("href")), link.text());
+                    }
                 }
             }
         }
@@ -88,6 +90,14 @@ public class WebParser {
             new URL(link).toURI();
             return true;
         } catch (Exception ex) {
+            return false;
+        }
+    }
+
+    private boolean hasCorrectWidth(Element element) {
+        try {
+            return Integer.parseInt(element.attr("width").replace("%", "")) >= 30;
+        } catch (NumberFormatException ex) {
             return false;
         }
     }
