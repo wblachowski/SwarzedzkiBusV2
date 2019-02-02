@@ -70,7 +70,11 @@ public class WebParser {
 
     private void downloadPage(String urlString) {
         try {
-            doc = Jsoup.connect(urlString).get();
+            if (urlString.contains("S8lista")) {
+                doc = Jsoup.parse(new URL(urlString).openStream(), "unicode", urlString);
+            } else {
+                doc = Jsoup.connect(urlString).get();
+            }
         } catch (Exception ex) {
             System.out.println(ex.getMessage());
         }
