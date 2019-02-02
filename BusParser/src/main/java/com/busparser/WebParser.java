@@ -8,6 +8,7 @@ import org.jsoup.select.Elements;
 import java.net.URL;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class WebParser {
@@ -57,13 +58,9 @@ public class WebParser {
         String busname = "";
         downloadPage(url);
         String html = doc.outerHtml();
-        int index = html.indexOf("LINIA ");
-        if (index >= 0) {
-            index = index + "LINIA ".length();
-            while (index < html.length() && Character.isLetterOrDigit(html.charAt(index))) {
-                busname += html.charAt(index);
-                index++;
-            }
+        Matcher matcher = Pattern.compile("LINIA ([\\w\\d]{1,5})").matcher(html);
+        if(matcher.find()){
+            busname = matcher.group(1);
         }
         return busname;
     }
