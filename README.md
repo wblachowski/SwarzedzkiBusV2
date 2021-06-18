@@ -1,7 +1,7 @@
 # Swarzędzki Bus
 An app containing timetables for buses coursing in Swarzędz, Poland. The main objective of the app was to be as simple as possible (but not simpler) and work offline allowing the user to check the timetables quickly and with no Internet service required.
 
-To achieve this, all timetables in the PDF format for all bus lines and all stops were scraped from the city official website and parsed accordingly. The data is stored in an SQLite database, that is used by the app.
+To achieve this, all timetables in the PDF format for all bus lines and all stops were scraped from the city official website and parsed accordingly. The data is stored in an SQLite database read by the app.
 
 ## Screenshots
 <p float="right">
